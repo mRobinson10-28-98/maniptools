@@ -6,6 +6,8 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(FetchContent)
+
+option(INSTALL_GTEST OFF)
 FetchContent_Declare(
   googletest
   URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
@@ -43,7 +45,7 @@ add_executable(maniptools_test
     test/manipndof_test.cpp
     test/skew_test.cpp
     test/twist_test.cpp
-    )
+)
 target_link_libraries(maniptools_test GTest::gtest_main ManipTools Manip5Dof)
 
 include(GoogleTest)
