@@ -1,3 +1,0 @@
-/home/mrobins/my_repos/maniptools/bin/libManipTools.a
-/home/mrobins/my_repos/maniptools/bin/libManip5Dof.a
-/home/mrobins/my_repos/maniptools/bin/my_test

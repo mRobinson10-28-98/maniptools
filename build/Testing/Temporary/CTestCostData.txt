@@ -1,7 +1,0 @@
-HelloTest.BasicAssert 7 0.000220035
-ManipNDof.BasicAssert 1 0
-Manip5Dof.PositionCheck 1 0.00202871
-Manip5Dof_test.PositionCheck 1 0.00171802
-skew_test.PositionCheck 1 0.0017642
-twist_test.PositionCheck 1 0.00142735
----

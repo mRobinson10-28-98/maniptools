@@ -1,1 +1,0 @@
-/usr/bin/c++ CMakeFiles/manipndof_test.dir/test/manipndof_test.cpp.o -o manipndof_test  lib/libgtest_main.a lib/libgtest.a 
