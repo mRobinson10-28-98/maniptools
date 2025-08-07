@@ -1,0 +1,7 @@
+add_test( Manip5Dof_test.PositionCheck /home/mrobins/my_repos/maniptools/build/maniptools_test [==[--gtest_filter=Manip5Dof_test.PositionCheck]==] --gtest_also_run_disabled_tests)
+set_tests_properties( Manip5Dof_test.PositionCheck PROPERTIES WORKING_DIRECTORY /home/mrobins/my_repos/maniptools/build SKIP_REGULAR_EXPRESSION [==[\[  SKIPPED \]]==])
+add_test( skew_test.PositionCheck /home/mrobins/my_repos/maniptools/build/maniptools_test [==[--gtest_filter=skew_test.PositionCheck]==] --gtest_also_run_disabled_tests)
+set_tests_properties( skew_test.PositionCheck PROPERTIES WORKING_DIRECTORY /home/mrobins/my_repos/maniptools/build SKIP_REGULAR_EXPRESSION [==[\[  SKIPPED \]]==])
+add_test( twist_test.PositionCheck /home/mrobins/my_repos/maniptools/build/maniptools_test [==[--gtest_filter=twist_test.PositionCheck]==] --gtest_also_run_disabled_tests)
+set_tests_properties( twist_test.PositionCheck PROPERTIES WORKING_DIRECTORY /home/mrobins/my_repos/maniptools/build SKIP_REGULAR_EXPRESSION [==[\[  SKIPPED \]]==])
+set( maniptools_test_TESTS Manip5Dof_test.PositionCheck skew_test.PositionCheck twist_test.PositionCheck)

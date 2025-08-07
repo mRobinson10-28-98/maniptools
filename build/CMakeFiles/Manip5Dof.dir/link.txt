@@ -1,0 +1,2 @@
+/usr/bin/ar qc libManip5Dof.a CMakeFiles/Manip5Dof.dir/src/Manip5Dof.cpp.o
+/usr/bin/ranlib libManip5Dof.a

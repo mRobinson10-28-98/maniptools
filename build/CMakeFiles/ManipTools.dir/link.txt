@@ -1,0 +1,2 @@
+/usr/bin/ar qc libManipTools.a CMakeFiles/ManipTools.dir/src/skew.cpp.o CMakeFiles/ManipTools.dir/src/TwistJoint.cpp.o CMakeFiles/ManipTools.dir/src/ManipNDof.cpp.o CMakeFiles/ManipTools.dir/src/JointControllerLerp.cpp.o CMakeFiles/ManipTools.dir/src/JointControllerSnap.cpp.o
+/usr/bin/ranlib libManipTools.a

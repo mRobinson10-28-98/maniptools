@@ -1,0 +1,5 @@
+if(EXISTS "/home/mrobins/my_repos/maniptools/build/maniptools_test[1]_tests.cmake")
+  include("/home/mrobins/my_repos/maniptools/build/maniptools_test[1]_tests.cmake")
+else()
+  add_test(maniptools_test_NOT_BUILT maniptools_test_NOT_BUILT)
+endif()

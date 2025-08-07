@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/maniptools_test.dir/test/manipndof_test.cpp.o CMakeFiles/maniptools_test.dir/test/skew_test.cpp.o CMakeFiles/maniptools_test.dir/test/twist_test.cpp.o -o maniptools_test  lib/libgtest_main.a libManipTools.a libManip5Dof.a lib/libgtest.a libManipTools.a 
