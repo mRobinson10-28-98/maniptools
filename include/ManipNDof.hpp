@@ -21,6 +21,7 @@ public:
         Eigen::Matrix4d g_0);
 
     // Getters
+    int GetDof();
     Eigen::VectorXd GetTheta();
     Eigen::VectorXd GetThetaDot();
     Eigen::Matrix4d GetPose();

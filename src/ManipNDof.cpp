@@ -27,6 +27,11 @@ void ManipNDof::Initialize(std::vector<TwistJoint> pManipTwists,
     mControlType = POSITION_CONTROL_TYPE;
 }
 
+int ManipNDof::GetDof()
+{
+    return mDof;
+}
+
 Eigen::VectorXd ManipNDof::GetTheta()
 {
     return mTheta;
