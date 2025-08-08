@@ -36,9 +36,13 @@ add_executable(my_test src/my_test.cpp)
 target_link_libraries(my_test maniptools)
 
 install(TARGETS
-  maniptools
   my_test
   DESTINATION ${PROJECT_SOURCE_DIR}/bin/
+)
+
+install(TARGETS
+  maniptools
+  DESTINATION ${PROJECT_SOURCE_DIR}/lib/
 )
 
 enable_testing()
