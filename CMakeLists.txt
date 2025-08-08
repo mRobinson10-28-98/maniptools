@@ -23,18 +23,20 @@ include_directories(/usr/include/eigen3)
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
 # Manipulator toolset; twists and other LA functions
-add_library(ManipTools src/skew.cpp src/TwistJoint.cpp src/ManipNDof.cpp
-  src/JointControllerLerp.cpp src/JointControllerSnap.cpp)
+add_library(ManipTools 
+  src/skew.cpp 
+  src/TwistJoint.cpp 
+  src/ManipNDof.cpp
+  src/JointControllerLerp.cpp 
+  src/JointControllerSnap.cpp
+  src/Manip5Dof.cpp)
 
-add_library(Manip5Dof src/Manip5Dof.cpp)
-target_link_libraries(Manip5Dof ManipTools)
 
 add_executable(my_test src/my_test.cpp)
-target_link_libraries(my_test ManipTools Manip5Dof)
+target_link_libraries(my_test ManipTools)
 
 install(TARGETS
   ManipTools
-  Manip5Dof
   my_test
   DESTINATION ${PROJECT_SOURCE_DIR}/bin/
 )
@@ -46,7 +48,7 @@ add_executable(maniptools_test
     test/skew_test.cpp
     test/twist_test.cpp
 )
-target_link_libraries(maniptools_test GTest::gtest_main ManipTools Manip5Dof)
+target_link_libraries(maniptools_test GTest::gtest_main ManipTools)
 
 include(GoogleTest)
 gtest_discover_tests(maniptools_test)
