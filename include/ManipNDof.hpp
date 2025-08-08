@@ -20,6 +20,11 @@ public:
     void Initialize(std::vector<TwistJoint> pManipTwists, 
         Eigen::Matrix4d g_0);
 
+    // Getters
+    Eigen::VectorXd GetTheta();
+    Eigen::VectorXd GetThetaDot();
+    Eigen::Matrix4d GetPose();
+
     void CommandJointConfig(std::vector<double> thetas);
     void CommandJointVel(std::vector<double> thetas);
 

@@ -27,6 +27,19 @@ void ManipNDof::Initialize(std::vector<TwistJoint> pManipTwists,
     mControlType = POSITION_CONTROL_TYPE;
 }
 
+Eigen::VectorXd ManipNDof::GetTheta()
+{
+    return mTheta;
+}
+Eigen::VectorXd ManipNDof::GetThetaDot()
+{
+    return mThetaDot;
+}
+Eigen::Matrix4d ManipNDof::GetPose()
+{
+    return mGt;
+}
+
 void ManipNDof::CommandJointConfig(std::vector<double> thetas)
 {
     if(mDof != thetas.size())
