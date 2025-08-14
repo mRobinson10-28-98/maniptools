@@ -1,3 +1,5 @@
+#include <Eigen/Dense>
+
 #include "skew.hpp"
 
 Eigen::Matrix3d skew3d(Eigen::Vector3d v)

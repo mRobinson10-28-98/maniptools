@@ -21,6 +21,7 @@ TwistJoint::TwistJoint(TwistType twist)
 // Given position vector to joint axis q and axis w, assemble twist
 TwistJoint::TwistJoint(Eigen::Vector3d q, Eigen::Vector3d w)
 {
+    w.normalize();
     mTwist.head(3) = -w.cross(q);
     mTwist.tail(3) = w;
 
@@ -32,13 +33,6 @@ Eigen::Matrix4d TwistJoint::TwistExponential(double theta)
     Eigen::Matrix4d transform;
     Eigen::Vector3d v = mBaseTwist.head(3);
     Eigen::Vector3d w = mBaseTwist.tail(3);
-
-    // For reference TO BE DELETED
-    //transform.col(0).tail(1) << theta;
-    //transform(Eigen::seqN(0,1), Eigen::seqN(0,1)) << theta;
-    // transform(0,0) = theta;
-    // transform(0,0) = v(0);
-    // transform(0,0) = w(0);
 
     Eigen::Matrix3d rotation, w_skew;
     Eigen::Vector3d translation;

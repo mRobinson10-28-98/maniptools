@@ -10,6 +10,16 @@
 
 int main()
 {
+    // Twist Test
+    Eigen::Vector3d q_test {1,0,0};
+    Eigen::Vector3d z_axis {0,0,1};
+    TwistJoint joint(q_test, z_axis);
+    std::cout << "Testing joint twist exp: 0 degrees\n" << joint.TwistExponential(0) << std::endl;
+    std::cout << "Testing joint twist exp: 90 degrees\n" << joint.TwistExponential(M_PI/2) << std::endl;
+    std::cout << "Testing joint twist exp: 180 degrees\n" << joint.TwistExponential(M_PI) << std::endl;
+    std::cout << "Testing joint twist exp: 270 degrees\n" << joint.TwistExponential(3 * M_PI / 4) << std::endl;
+    std::cout << "Testing joint twist exp: 360 degrees\n" << joint.TwistExponential(2 * M_PI) << std::endl;
+    std::cout << "\n\n";
     JointControllerSnap myJC;
 
     std::array<double, 5> link_lengths {5,4,3,2,1};
