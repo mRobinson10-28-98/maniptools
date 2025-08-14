@@ -10,7 +10,7 @@ include(FetchContent)
 option(INSTALL_GTEST OFF)
 FetchContent_Declare(
   googletest
-  URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
+  URL https://github.com/google/googletest/archive/refs/tags/v1.14.0.zip
 )
 FetchContent_MakeAvailable(googletest)
 
@@ -37,12 +37,12 @@ target_link_libraries(my_test maniptools)
 
 install(TARGETS
   my_test
-  DESTINATION ${PROJECT_SOURCE_DIR}/bin/
+  DESTINATION ${PROJECT_SOURCE_DIR}/bin
 )
 
 install(TARGETS
   maniptools
-  DESTINATION ${PROJECT_SOURCE_DIR}/lib/
+  DESTINATION ${PROJECT_SOURCE_DIR}/lib
 )
 
 enable_testing()
@@ -53,6 +53,7 @@ add_executable(maniptools_test
     test/twist_test.cpp
 )
 target_link_libraries(maniptools_test GTest::gtest_main maniptools)
+target_include_directories(maniptools_test PUBLIC ${PROJECT_SOURCE_DIR}/test)
 
 include(GoogleTest)
 gtest_discover_tests(maniptools_test)

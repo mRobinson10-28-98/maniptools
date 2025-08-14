@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+#include <Eigen/Dense>
 
 #include "skew.hpp"
 #include "TwistJoint.hpp"

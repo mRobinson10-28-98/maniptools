@@ -1,50 +1,98 @@
 #include <gtest/gtest.h>
+#include <Eigen/Dense>
 
 #include "skew.hpp"
 #include "TwistJoint.hpp"
 #include "Manip5Dof.hpp"
-#include "JointControllerSnap.hpp"
+#include "JointControllerSnap.hpp" 
+// #include "JointControllerMock.hpp"
 
 const double ERROR_BOUND = 1e-6;
 
-TEST(Manip5Dof_test, PositionCheck)
+class Manip5DofTest : public ::testing::Test
 {
-    double x, y, z, total_length;
-    JointControllerSnap myJC;
-    std::array<double, 5> link_lengths {5,4,3,2,1};
+protected:
+    // Configurable for test
+    // JointControllerMock mJcMock;
+    JointControllerSnap mJcMock;
+    std::array<double, 5> mLinkLengths {5, 4, 3, 2, 1};
 
-    total_length = 0;
-    for (double l: link_lengths)
+    // Class under test
+    std::unique_ptr<Manip5Dof> mManip;
+
+    // Other props
+    double mTotalLength;
+
+    // Setup test object
+    void SetUp() override 
     {
-        total_length += l;
+        mManip = std::make_unique<Manip5Dof>(mJcMock, mLinkLengths);
+        mTotalLength = 0;
+        for (double l: mLinkLengths)
+        {
+            mTotalLength += l;
+        }
+
     }
 
-    Manip5Dof myManip(myJC, link_lengths);
+    void TearDown() override
+    {
 
+    }
+};
+
+// Test1 - at null joint config, check forward kinematics transform
+TEST_F(Manip5DofTest, TestForwardKinematics1)
+{
     std::vector<double> q {0, 0, 0, 0, 0};
-    myManip.CommandJointConfig(q);
-    myManip.StepJointController();
-    Eigen::Matrix4d fk = myManip.Fk();
+    mManip->CommandJointConfig(q);
+    mManip->StepJointController();
+    Eigen::Matrix4d fk_calculated = mManip->Fk();
+    Eigen::Matrix4d fk_expected {
+        {1, 0, 0, mTotalLength},
+        {0, 1, 0, 0},
+        {0, 0, 1, 0},
+        {0, 0, 0, 1}
+    };
 
-    x = fk(0, 3);
-    y = fk(1, 3);
-    z = fk(2, 3);
+    // Iterate through matrix to check each element
+    for(uint row = 0; row < 4; row++)
+    {
+        for(uint col = 0; col < 4; col++)
+        {
+            ASSERT_NEAR(fk_calculated(row, col), fk_expected(row, col), ERROR_BOUND);
+        }
+    }
+}
 
-    ASSERT_NEAR(x, total_length, ERROR_BOUND);
-    ASSERT_NEAR(y, 0, ERROR_BOUND);
-    ASSERT_NEAR(z, 0, ERROR_BOUND);
+// Test2 - rotate j0 180d and check forward kinematics transform
+TEST_F(Manip5DofTest, TestForwardKinematics2)
+{
+    std::vector<double> q {M_PI, 0, 0, 0, 0};
+    mManip->CommandJointConfig(q);
+    mManip->StepJointController();
+    Eigen::Matrix4d fk_calculated = mManip->Fk();
 
-    q.at(0) = M_PI;
+    std::cout << "Getters: \n" << mManip->GetDof() << "\n" << mManip->GetTheta() << "\n" << mManip->GetPose() << "\n";
+    std::cout << "Link lengths: \n";
+    for(uint i = 0; i < 5; i++)
+    {
+        std::cout << mLinkLengths[i] << std::endl;
+    }
+    std::cout << "TEST: \n" << fk_calculated << std::endl;
 
-    myManip.CommandJointConfig(q);
-    myManip.StepJointController();
-    fk = myManip.Fk();
-
-    x = fk(0, 3);
-    y = fk(1, 3);
-    z = fk(2, 3);
-
-    ASSERT_NEAR(x, -total_length, ERROR_BOUND);
-    ASSERT_NEAR(y, 0, ERROR_BOUND);
-    ASSERT_NEAR(z, 0, ERROR_BOUND);
+    Eigen::Matrix4d fk_expected {
+        {-1, 0, 0, -mTotalLength},
+        {0, -1, 0, 0},
+        {0, 0, 1, 0},
+        {0, 0, 0, 1}
+    };
+    // Iterate through matrix to check each element
+    for(uint row = 0; row < 4; row++)
+    {
+        for(uint col = 0; col < 4; col++)
+        {
+            ASSERT_NEAR(fk_calculated(row, col), fk_expected(row, col), ERROR_BOUND);
+        }
+    }
 }
