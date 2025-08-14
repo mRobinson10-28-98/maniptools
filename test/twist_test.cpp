@@ -13,7 +13,7 @@ const double ERROR_BOUND = 1e-6;
 // - - - w = z axis
 // - Expect twist translational comp to be in negative y direction at origin
 // - Expect twist rotational comp to be z axis
-TEST(TwistJointTest, TestConstructor_qw1)
+TEST(TwistJoint_test, TestConstructor_qw1)
 {
     Eigen::Vector3d q_test {1,0,0};
     Eigen::Vector3d z_axis {0,0,1};
@@ -29,7 +29,7 @@ TEST(TwistJointTest, TestConstructor_qw1)
 // - - - w = z axis
 // - Expect twist translational comp to be in positive x direction at origin
 // - Expect twist rotational comp to be z axis
-TEST(TwistJointTest, TestConstructor_qw2)
+TEST(TwistJoint_test, TestConstructor_qw2)
 {
     Eigen::Vector3d q_test {0, 1, 0};
     Eigen::Vector3d z_axis {0,0,1};
@@ -45,7 +45,7 @@ TEST(TwistJointTest, TestConstructor_qw2)
 // - - - w = z axis
 // - Expect twist translational comp to be zero (axis located at origin)
 // - Expect twist rotational comp to be z axis
-TEST(TwistJointTest, TestConstructor_qw3)
+TEST(TwistJoint_test, TestConstructor_qw3)
 {
     Eigen::Vector3d q_test {0, 0, 0};
     Eigen::Vector3d z_axis {0,0,1};
@@ -61,7 +61,7 @@ TEST(TwistJointTest, TestConstructor_qw3)
 // - - - w = z axis stretched
 // - Expect twist translational comp to be in negative y direction at origin with appropriate mag
 // - Expect twist rotational comp to be z axis and normalized
-TEST(TwistJointTest, TestConstructor_qw4)
+TEST(TwistJoint_test, TestConstructor_qw4)
 {
     Eigen::Vector3d q_test {1, 0, 0};
     Eigen::Vector3d z_axis {0,0,5};
@@ -77,7 +77,7 @@ TEST(TwistJointTest, TestConstructor_qw4)
 // - - - w = x axis
 // - Expect twist translational comp to be in positive y direction at origin with appropriate mag
 // - Expect twist rotational comp to be x axis
-TEST(TwistJointTest, TestConstructor_qw5)
+TEST(TwistJoint_test, TestConstructor_qw5)
 {
     Eigen::Vector3d q_test {0, 0, 5};
     Eigen::Vector3d x_axis {1,0,0};
@@ -92,7 +92,7 @@ TEST(TwistJointTest, TestConstructor_qw5)
 // - Expect: 
 // - - - Rotation matrix of transform depicts 3d rotation about z axis by 90 degrees
 // - - - Translation vector moves origin below twist joint
-TEST(TwistJointTest, TestExponential_zaxis_90d)
+TEST(TwistJoint_test, TestExponential_zaxis_90d)
 {
     Eigen::Vector3d q_test {1,0,0};
     Eigen::Vector3d z_axis {0,0,1};
@@ -123,7 +123,7 @@ TEST(TwistJointTest, TestExponential_zaxis_90d)
 // - Expect: 
 // - - - Rotation matrix of transform depicts 3d rotation about z axis by 180 degrees
 // - - - Translation vector moves origin to the right of joint
-TEST(TwistJointTest, TestExponential_zaxis_180d)
+TEST(TwistJoint_test, TestExponential_zaxis_180d)
 {
     Eigen::Vector3d q_test {1,0,0};
     Eigen::Vector3d z_axis {0,0,1};
@@ -154,7 +154,7 @@ TEST(TwistJointTest, TestExponential_zaxis_180d)
 // - Expect: 
 // - - - Rotation matrix of transform depicts 3d rotation about negative x axis by 90 degrees
 // - - - Translation vector moves origin down y axis and up z axis
-TEST(TwistJointTest, TestExponential_xaxis_90d)
+TEST(TwistJoint, TestExponential_xaxis_90d)
 {
     Eigen::Vector3d q_test {0,0,5};
     Eigen::Vector3d x_axis {-1,0,0};

@@ -8,7 +8,7 @@
 
 const double ERROR_BOUND = 1e-6;
 
-TEST(skew3dTest, Test1)
+TEST(skew3d_test, Test1)
 {
     Eigen::Vector3d test_vector {1,2,-3};
 
