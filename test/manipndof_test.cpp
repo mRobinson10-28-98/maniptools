@@ -47,7 +47,9 @@ TEST_F(Manip5DofTest, TestForwardKinematics1)
     std::vector<double> q {0, 0, 0, 0, 0};
     mManip->CommandJointConfig(q);
     mManip->StepJointController();
-    Eigen::Matrix4d fk_calculated = mManip->Fk();
+    mManip->Fk();
+    Eigen::Matrix4d fk_calculated = mManip->GetPose();
+
     Eigen::Matrix4d fk_expected {
         {1, 0, 0, mTotalLength},
         {0, 1, 0, 0},
@@ -71,15 +73,8 @@ TEST_F(Manip5DofTest, TestForwardKinematics2)
     std::vector<double> q {M_PI, 0, 0, 0, 0};
     mManip->CommandJointConfig(q);
     mManip->StepJointController();
-    Eigen::Matrix4d fk_calculated = mManip->Fk();
-
-    std::cout << "Getters: \n" << mManip->GetDof() << "\n" << mManip->GetTheta() << "\n" << mManip->GetPose() << "\n";
-    std::cout << "Link lengths: \n";
-    for(uint i = 0; i < 5; i++)
-    {
-        std::cout << mLinkLengths[i] << std::endl;
-    }
-    std::cout << "TEST: \n" << fk_calculated << std::endl;
+    mManip->Fk();
+    Eigen::Matrix4d fk_calculated = mManip->GetPose();
 
     Eigen::Matrix4d fk_expected {
         {-1, 0, 0, -mTotalLength},
@@ -95,4 +90,14 @@ TEST_F(Manip5DofTest, TestForwardKinematics2)
             ASSERT_NEAR(fk_calculated(row, col), fk_expected(row, col), ERROR_BOUND);
         }
     }
+}
+
+TEST_F(Manip5DofTest, TestForwardDifferentialKinematics1)
+{
+    std::vector<double> q {M_PI, 0, 0, 0, 0};
+    mManip->CommandJointConfig(q);
+    mManip->StepJointController();
+    mManip->Fk();
+    mManip->Dk();
+    Eigen::Matrix4d fk_calculated = mManip->GetPose();
 }

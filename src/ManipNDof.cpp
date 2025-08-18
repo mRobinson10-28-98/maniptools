@@ -45,6 +45,21 @@ Eigen::Matrix4d ManipNDof::GetPose()
     return mGt;
 }
 
+TwistType ManipNDof::GetTwist()
+{
+    return mEndEffectorTwist;
+}
+
+Eigen::MatrixXd ManipNDof::GetSGJacobian()
+{
+    return mSGJacobian;
+}
+
+Eigen::MatrixXd ManipNDof::GetSAJacobian()
+{
+    return mSAJacobian;
+}
+
 void ManipNDof::CommandJointConfig(std::vector<double> thetas)
 {
     if(mDof != thetas.size())
@@ -87,7 +102,7 @@ void ManipNDof::StepJointController()
     }
 }
 
-Eigen::Matrix4d ManipNDof::Fk()
+void ManipNDof::Fk()
 {
     mGt = Eigen::Matrix4d::Identity();
 
@@ -102,7 +117,7 @@ Eigen::Matrix4d ManipNDof::Fk()
     return mGt;
 }
 
-TwistType ManipNDof::Dk()
+void ManipNDof::Dk()
 {
     // Calculate each adjoint and adjust each joint twist for geometric jacobian
     for (uint i = 0; i < mDof; i++)

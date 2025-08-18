@@ -20,24 +20,38 @@ public:
     void Initialize(std::vector<TwistJoint> pManipTwists, 
         Eigen::Matrix4d g_0);
 
+    // Hertz frequency
+    void SetRunFrequency(int f);
+
     // Getters
     int GetDof();
     Eigen::VectorXd GetTheta();
     Eigen::VectorXd GetThetaDot();
     Eigen::Matrix4d GetPose();
+    TwistType GetTwist();
+    Eigen::MatrixXd GetSGJacobian();
+    Eigen::MatrixXd GetSAJacobian();
 
     void CommandJointConfig(std::vector<double> thetas);
     void CommandJointVel(std::vector<double> thetas);
+
+    // 1. Step Joint Controller and get joint states (position, velocity, acceleration, effort)
+    // 2. Calculated forward kinematics
+    // 3. Calculate differential fk
+    void StepModel();
 
     void StepJointController();
 
     // Calculate Forward Kinematics
     // Note: Set joint config prior
-    Eigen::Matrix4d Fk();
+    void Fk();
 
     // Calculate differential kinematics; calculate end-effector twist
-    // Note: Set joint config and join velocity prior
-    TwistType Dk();
+    // Note: Set joint config and joint velocity prior
+    void Dk();
+
+protected:
+
 
 private:
     enum ControlType
