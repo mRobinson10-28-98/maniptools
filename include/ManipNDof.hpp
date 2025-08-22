@@ -40,6 +40,7 @@ public:
     // 3. Calculate differential fk
     void StepModel();
 
+protected:
     void StepJointController();
 
     // Calculate Forward Kinematics
@@ -49,9 +50,6 @@ public:
     // Calculate differential kinematics; calculate end-effector twist
     // Note: Set joint config and joint velocity prior
     void Dk();
-
-protected:
-
 
 private:
     enum ControlType

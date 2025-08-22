@@ -90,6 +90,13 @@ void ManipNDof::CommandJointVel(std::vector<double> thetas)
     mControlType = VELOCITY_CONTROL_TYPE;
 }
 
+void ManipNDof::StepModel()
+{
+    StepJointController();
+    Fk();
+    Dk();
+}
+
 void ManipNDof::StepJointController()
 {
     if (mControlType == POSITION_CONTROL_TYPE)
@@ -113,8 +120,6 @@ void ManipNDof::Fk()
     }
 
     mGt *= mG_0;
-
-    return mGt;
 }
 
 void ManipNDof::Dk()
@@ -138,7 +143,5 @@ void ManipNDof::Dk()
     mSAJacobian = geometricAnalyticMapAdjoint * mSGJacobian;
 
     mEndEffectorTwist = mSAJacobian * mThetaDot;
-
-    return mEndEffectorTwist;
 }
 

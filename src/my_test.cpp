@@ -26,33 +26,37 @@ int main()
     Manip5Dof myManip(myJC, link_lengths);
 
     std::vector<double> q {M_PI, 0, 0, 0, 0};
+    // Command
     myManip.CommandJointConfig(q);
-    myManip.StepJointController();
-    Eigen::Matrix4d fk = myManip.Fk();
+    // Step sim
+    myManip.StepModel();
+    // Get State
+    Eigen::Matrix4d fk = myManip.GetPose();
+
     std::cout << "Planar 5-bar manip with j0 rotated 180 degrees: \n" << fk << std::endl;
 
     // Reset to null config and command velocity
     q.at(0) = 0;
     myManip.CommandJointConfig(q);
-    myManip.StepJointController();
-    fk = myManip.Fk();
+    myManip.StepModel();
+    fk = myManip.GetPose();
     std::cout << "Planar 5-bar manip null config: \n" << fk << std::endl;
 
     std::vector<double> q_dot {1, 0, 0, 0, 0};
     myManip.CommandJointVel(q_dot);
-    myManip.StepJointController();
+    myManip.StepModel();
 
     // Should be in positive y direction
-    TwistType my_twist = myManip.Dk();
+    TwistType my_twist = myManip.GetTwist();
     std::cout << "Planar 5-bar end-effector twist with j0 = +1rad/s: \n" << my_twist << std::endl;
 
     q_dot.at(0) = 0;
     q_dot.at(4) = 1;
     myManip.CommandJointVel(q_dot);
-    myManip.StepJointController();
+    myManip.StepModel();
 
     // Should be in positive y direction but much smaller
-    my_twist = myManip.Dk();
+    my_twist = myManip.GetTwist();
     std::cout << "Planar 5-bar end-effector twist with j5 = +1rad/s: \n" << my_twist << std::endl;
 
     q.at(3) = M_PI/2;

@@ -46,8 +46,7 @@ TEST_F(Manip5DofTest, TestForwardKinematics1)
 {
     std::vector<double> q {0, 0, 0, 0, 0};
     mManip->CommandJointConfig(q);
-    mManip->StepJointController();
-    mManip->Fk();
+    mManip->StepModel();
     Eigen::Matrix4d fk_calculated = mManip->GetPose();
 
     Eigen::Matrix4d fk_expected {
@@ -72,8 +71,7 @@ TEST_F(Manip5DofTest, TestForwardKinematics2)
 {
     std::vector<double> q {M_PI, 0, 0, 0, 0};
     mManip->CommandJointConfig(q);
-    mManip->StepJointController();
-    mManip->Fk();
+    mManip->StepModel();
     Eigen::Matrix4d fk_calculated = mManip->GetPose();
 
     Eigen::Matrix4d fk_expected {
@@ -96,8 +94,6 @@ TEST_F(Manip5DofTest, TestForwardDifferentialKinematics1)
 {
     std::vector<double> q {M_PI, 0, 0, 0, 0};
     mManip->CommandJointConfig(q);
-    mManip->StepJointController();
-    mManip->Fk();
-    mManip->Dk();
+    mManip->StepModel();
     Eigen::Matrix4d fk_calculated = mManip->GetPose();
 }
