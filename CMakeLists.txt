@@ -56,6 +56,7 @@ add_executable(maniptools_test
     test/skew_test.cpp
     test/twist_test.cpp
     test/simclock_test.cpp
+    test/joint_controller_test.cpp
 )
 target_link_libraries(maniptools_test GTest::gtest_main maniptools)
 target_include_directories(maniptools_test PUBLIC ${PROJECT_SOURCE_DIR}/test)

@@ -16,6 +16,8 @@ public:
         Eigen::VectorXd& t_ddot,
         Eigen::VectorXd& e
     ) override; 
+
+    void SetTau(double t);
 };
 
 #endif //_JOINT_CONTROLLER_STEP_RESPONSE_HPP_

@@ -1,5 +1,10 @@
 #include "SimClock.hpp"
 
+SimClock::SimClock()
+{ 
+    std::cout << "SimClock singleton created.\n"; 
+    mSimTime = 0.0;
+}
 void SimClock::SetSimFreq(double f)
 {
     mFreq = f;

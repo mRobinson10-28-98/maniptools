@@ -7,7 +7,7 @@
 class SimClock
 {
 private:
-    SimClock() { std::cout << "SimClock singleton created.\n"; }
+    SimClock();
     SimClock(const SimClock&) = delete;
     SimClock& operator=(const SimClock&) = delete;
 
@@ -26,7 +26,7 @@ public:
     double GetSimFreq();
 
 private:
-    double mSimTime {0};
+    double mSimTime {0.0};
 
     double mFreq {1.0};
     double mStepInc {1.0};
