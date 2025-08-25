@@ -14,6 +14,7 @@ void JointControllerStepResponse::GetJointState(
 )
 {
     // TODO use derivatives and taylor series approx
+    // TODO add sensor noise?
 
     Eigen::VectorXd previous_theta = mTheta;
     Eigen::VectorXd previous_theta_dot = mThetaDot;
