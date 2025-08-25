@@ -60,10 +60,9 @@ Eigen::MatrixXd ManipNDof::GetSAJacobian()
     return mSAJacobian;
 }
 
-void ManipNDof::SetRunFrequency(int f)
+void ManipNDof::SetRunFrequency(double f)
 {
-    mFreq = f;
-    mTimeStep = 1.0 / f;
+    mClock.SetSimFreq(f);
 }
 
 void ManipNDof::CommandJointConfig(std::vector<double> thetas)
@@ -77,6 +76,8 @@ void ManipNDof::CommandJointConfig(std::vector<double> thetas)
     {
         mThetaCommand(i) = thetas[i];
     }
+
+    mJointController.PositionCommand(mThetaCommand);
 
     mControlType = POSITION_CONTROL_TYPE;
 }
@@ -93,30 +94,20 @@ void ManipNDof::CommandJointVel(std::vector<double> thetas)
         mThetaDotCommand(i) = thetas[i];
     }
 
+    mJointController.VelocityCommand(mThetaDotCommand);
+
     mControlType = VELOCITY_CONTROL_TYPE;
 }
 
 void ManipNDof::StepModel()
 {
-    StepJointController();
+    // Step simulation clock and get joint state of next step
+    mClock.StepClock();
+    mJointController.GetJointState(mTheta, mThetaDot, mThetaDdot, mEffort);
+
+    // Calculate manipulator
     Fk();
     Dk();
-}
-
-void ManipNDof::StepJointController()
-{
-    // Eigen::VectorXd previous_theta = mTheta;
-    // Eigen::VectorXd previous_t_dot = mThetaDot;
-    // Eigen::VectorXd previous_t_ddot = mThetaDdot; 
-
-    if (mControlType == POSITION_CONTROL_TYPE)
-    {
-        mJointController.PositionControl(mTheta, mThetaCommand);
-    }
-    else if (mControlType == VELOCITY_CONTROL_TYPE)
-    {
-        mJointController.VelocityControl(mThetaDot, mThetaDotCommand);
-    }
 }
 
 void ManipNDof::Fk()

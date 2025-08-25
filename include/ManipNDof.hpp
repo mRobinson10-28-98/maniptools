@@ -7,6 +7,8 @@
 #include <memory>
 #include <vector>
 
+#include "Common.hpp"
+#include "SimClock.hpp"
 #include "TwistJoint.hpp"
 #include "I_JointController.hpp"
 
@@ -21,7 +23,7 @@ public:
         Eigen::Matrix4d g_0);
 
     // Hertz frequency
-    void SetRunFrequency(int f);
+    void SetRunFrequency(double f);
 
     // Getters
     int GetDof();
@@ -41,8 +43,6 @@ public:
     void StepModel();
 
 protected:
-    void StepJointController();
-
     // Calculate Forward Kinematics
     // Note: Set joint config prior
     void Fk();
@@ -52,17 +52,8 @@ protected:
     void Dk();
 
 private:
-    enum ControlType
-    {
-        POSITION_CONTROL_TYPE,
-        VELOCITY_CONTROL_TYPE,
-        TORQUE_CONTROL_TYPE
-    };
-
-    // Sim properties
-    double mFreq;
-    double mTimeStep;
-
+    // Sim clock
+    SimClock& mClock {SimClock::GetInstance()};
     // ---
     // Static Manipulator Properties
     // ---
@@ -112,6 +103,12 @@ private:
 
     // End-effector twist
     TwistType mEndEffectorTwist;
+
+    // ---
+    // Effort Properties
+    // ---
+    Eigen::VectorXd mEffort;
+    Eigen::VectorXd mEffortCommand;
 };
 
 #endif //_MANIPNDOF_HPP_

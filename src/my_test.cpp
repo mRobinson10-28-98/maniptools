@@ -70,5 +70,4 @@ int main()
 
     SimClock& mClock2 = SimClock::GetInstance();
     std::cout << "Clock Time 2: " << mClock2.GetSimTime() << std::endl;
-
 }

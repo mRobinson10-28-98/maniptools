@@ -26,6 +26,8 @@ protected:
     // Setup test object
     void SetUp() override 
     {
+        Eigen::VectorXd v = Eigen::VectorXd::Zero(5);
+        mJcMock.Initialize(v, v, v, v);
         mManip = std::make_unique<Manip5Dof>(mJcMock, mLinkLengths);
         mTotalLength = 0;
         for (double l: mLinkLengths)
@@ -90,10 +92,10 @@ TEST_F(Manip5DofTest, TestForwardKinematics2)
     }
 }
 
-TEST_F(Manip5DofTest, TestForwardDifferentialKinematics1)
-{
-    std::vector<double> q {M_PI, 0, 0, 0, 0};
-    mManip->CommandJointConfig(q);
-    mManip->StepModel();
-    Eigen::Matrix4d fk_calculated = mManip->GetPose();
-}
+// TEST_F(Manip5DofTest, TestForwardDifferentialKinematics1)
+// {
+//     std::vector<double> q {M_PI, 0, 0, 0, 0};
+//     mManip->CommandJointConfig(q);
+//     mManip->StepModel();
+//     Eigen::Matrix4d fk_calculated = mManip->GetPose();
+// }

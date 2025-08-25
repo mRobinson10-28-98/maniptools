@@ -3,6 +3,7 @@
 
 #include <iostream>
 
+// Singleton class for tracking sim time between sim objects
 class SimClock
 {
 private:
@@ -18,15 +19,17 @@ public:
     }
 
     // Set frequency in Hz
-    void SetSimFreq(uint f);
+    void SetSimFreq(double f);
     void StepClock();
+
     double GetSimTime();
+    double GetSimFreq();
 
 private:
     double mSimTime {0};
 
-    uint mFreq;
-    double mStepInc;
+    double mFreq {1.0};
+    double mStepInc {1.0};
 };
 
 #endif //_SIMCLOCK_HPP_

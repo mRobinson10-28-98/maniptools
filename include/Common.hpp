@@ -1,0 +1,12 @@
+#ifndef _COMMON_HPP_
+#define _COMMON_HPP_
+
+enum ControlType
+{
+    POSITION_CONTROL_TYPE,
+    VELOCITY_CONTROL_TYPE,
+    ACCELERATION_CONTROL_TYPE,
+    EFFORT_CONTROL_TYPE
+};
+
+#endif //_COMMON_HPP_

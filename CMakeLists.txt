@@ -21,14 +21,16 @@ endif()
 # Include directory for Eigen3 and internal includes
 include_directories(/usr/include/eigen3)
 include_directories(${PROJECT_SOURCE_DIR}/include)
+include_directories(${PROJECT_SOURCE_DIR}/include/JointController)
 
 # Manipulator toolset; twists and other LA functions
 add_library(maniptools 
   src/skew.cpp 
   src/TwistJoint.cpp 
   src/ManipNDof.cpp
-  src/JointControllerLerp.cpp 
-  src/JointControllerSnap.cpp
+  src/JointController/JointControllerBase.cpp
+  src/JointController/JointControllerSnap.cpp
+  src/JointController/JointControllerStepResponse.cpp
   src/Manip5Dof.cpp
   src/SimClock.cpp
 )
