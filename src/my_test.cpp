@@ -62,13 +62,13 @@ int main()
 
     q.at(3) = M_PI/2;
     
-    SimClock& mClock = SimClock::GetSimClock();
+    SimClock& mClock = SimClock::GetInstance();
     mClock.SetSimFreq(1000);
     std::cout << "Clock Time: " << mClock.GetSimTime() << std::endl;
     mClock.StepClock();
     std::cout << "Clock Time: " << mClock.GetSimTime() << std::endl;
 
-    SimClock& mClock2 = SimClock::GetSimClock();
+    SimClock& mClock2 = SimClock::GetInstance();
     std::cout << "Clock Time 2: " << mClock2.GetSimTime() << std::endl;
 
 }

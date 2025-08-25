@@ -11,7 +11,7 @@ private:
     SimClock& operator=(const SimClock&) = delete;
 
 public:
-    static SimClock& GetSimClock()
+    static SimClock& GetInstance()
     {
         static SimClock instance;
         return instance;
