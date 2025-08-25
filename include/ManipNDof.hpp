@@ -59,6 +59,10 @@ private:
         TORQUE_CONTROL_TYPE
     };
 
+    // Sim properties
+    double mFreq;
+    double mTimeStep;
+
     // ---
     // Static Manipulator Properties
     // ---
@@ -96,6 +100,12 @@ private:
     Eigen::VectorXd mThetaDot;
     Eigen::VectorXd mThetaDotCommand;
 
+    // ---
+    // Second Order Properties (Ddot == 'double dot')
+    // ---
+    Eigen::VectorXd mThetaDdot;
+    Eigen::VectorXd mThetaDdotCommand;
+    
     // Spatial Geometric Jacobian & Spatial analytic jacobian
     Eigen::MatrixXd mSGJacobian;
     Eigen::MatrixXd mSAJacobian;

@@ -7,6 +7,7 @@
 #include "Manip5Dof.hpp"
 
 #include "JointControllerSnap.hpp"
+#include "SimClock.hpp"
 
 int main()
 {
@@ -61,52 +62,13 @@ int main()
 
     q.at(3) = M_PI/2;
     
-    // // random tests
-    // std::array<TwistJoint, 5> ts;
+    SimClock& mClock = SimClock::GetSimClock();
+    mClock.SetSimFreq(1000);
+    std::cout << "Clock Time: " << mClock.GetSimTime() << std::endl;
+    mClock.StepClock();
+    std::cout << "Clock Time: " << mClock.GetSimTime() << std::endl;
 
-    // std::array<double, 5> ls {5, 4, 3, 2, 1};
+    SimClock& mClock2 = SimClock::GetSimClock();
+    std::cout << "Clock Time 2: " << mClock2.GetSimTime() << std::endl;
 
-    // ls[0] = 5;
-
-    // Eigen::Vector3d tmp_v;
-    // Eigen::Vector3d z_axis {0, 0, 1};
-
-    // for (int i = 0; i < 5; i++)
-    // {
-    //     tmp_v << ls[i], 0, 0;
-    //     ts[i] = TwistJoint(tmp_v, z_axis);
-    // }
-
-    // for (int i = 0; i < 5; i++)
-    // {
-    //     std::cout << "Twist " << i << ": \n" << ts[i].GetTwist() << std::endl;
-    // }
-
-    // Eigen::Vector3d my_vector;
-    // my_vector << 1, 2, 3;
-    // std::cout << "My vector: \n" << my_vector << std::endl;
-
-    // Eigen::Matrix3d my_vector_skewed = skew3d(my_vector);    
-    // std::cout << "My vector 1,2,3 skewed: \n" << my_vector_skewed << std::endl;
-
-    // std::cout << "Identity \n" << Eigen::Matrix3d::Identity() << std::endl;
-
-    // std::cout << "Vector x vector transposed is 3x3: \n" << my_vector * my_vector.transpose() << std::endl;
-    // std::cout << "3x3 identity times column is column: \n" << Eigen::Matrix3d::Identity() * my_vector << std::endl;
-
-    // // 1 bar test; link length of 2
-    // double l = 2.0;
-    // Eigen::Vector3d p_0 {l, 0, 0};
-    // Eigen::Vector3d q {0, 0, 0};
-    // Eigen::Vector3d axis {0, 0, 1};
-
-    // Eigen::Matrix4d g_0;
-    // g_0.block(0,0,3,3) = Eigen::Matrix3d::Identity();
-    // g_0.col(3).head(3) = p_0;
-    // g_0.row(3) << 0, 0, 0, 1;
-
-    // TwistJoint MyJoint(q, axis);
-
-    // std::cout << "Initial transform of 1-bar EE: \n" << g_0 << std::endl;
-    // std::cout << "1-bar EE after rotation of 180 degrees: \n" << MyJoint.TwistExponential(M_PI) * g_0 << std::endl;
 }

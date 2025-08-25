@@ -60,6 +60,12 @@ Eigen::MatrixXd ManipNDof::GetSAJacobian()
     return mSAJacobian;
 }
 
+void ManipNDof::SetRunFrequency(int f)
+{
+    mFreq = f;
+    mTimeStep = 1.0 / f;
+}
+
 void ManipNDof::CommandJointConfig(std::vector<double> thetas)
 {
     if(mDof != thetas.size())
@@ -99,6 +105,10 @@ void ManipNDof::StepModel()
 
 void ManipNDof::StepJointController()
 {
+    // Eigen::VectorXd previous_theta = mTheta;
+    // Eigen::VectorXd previous_t_dot = mThetaDot;
+    // Eigen::VectorXd previous_t_ddot = mThetaDdot; 
+
     if (mControlType == POSITION_CONTROL_TYPE)
     {
         mJointController.PositionControl(mTheta, mThetaCommand);

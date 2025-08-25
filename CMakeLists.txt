@@ -29,7 +29,9 @@ add_library(maniptools
   src/ManipNDof.cpp
   src/JointControllerLerp.cpp 
   src/JointControllerSnap.cpp
-  src/Manip5Dof.cpp)
+  src/Manip5Dof.cpp
+  src/SimClock.cpp
+)
 
 
 add_executable(my_test src/my_test.cpp)
