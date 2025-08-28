@@ -56,7 +56,10 @@ void JointControllerStepResponse::GetJointState(
     }
     else
     {
-        // Nothing to see here
+        mTheta = mTheta;
+        mThetaDot = mThetaDot;
+        mThetaDdot = mThetaDdot;
+        mEffort = mEffort;
     }
 
     // return joint state

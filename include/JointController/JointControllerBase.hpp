@@ -34,7 +34,7 @@ protected:
     double mCommandTime;
 
     // Type of control based on most recent command (pos, vel, accel, or effort)
-    ControlType mControlType;
+    ControlType mControlType {POSITION_CONTROL_TYPE};
 
     // Time constant
     double mTau {0.1};

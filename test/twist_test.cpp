@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <Eigen/Dense>
 
-#include "skew.hpp"
+#include "Common.hpp"
 #include "TwistJoint.hpp"
 #include "Manip5Dof.hpp"
 #include "JointControllerSnap.hpp"

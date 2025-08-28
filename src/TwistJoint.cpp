@@ -1,7 +1,7 @@
 #include <math.h>
 
 #include "TwistJoint.hpp"
-#include "skew.hpp"
+#include "Common.hpp"
 
 // Default
 TwistJoint::TwistJoint()

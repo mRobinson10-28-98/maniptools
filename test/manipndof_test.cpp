@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <Eigen/Dense>
 
-#include "skew.hpp"
+#include "Common.hpp"
 #include "TwistJoint.hpp"
 #include "Manip5Dof.hpp"
 #include "JointControllerSnap.hpp" 
@@ -26,8 +26,10 @@ protected:
     // Setup test object
     void SetUp() override 
     {
+        // Initialize joints to 0s (pos, vel, accel, effort)
         Eigen::VectorXd v = Eigen::VectorXd::Zero(5);
         mJcMock.Initialize(v, v, v, v);
+
         mManip = std::make_unique<Manip5Dof>(mJcMock, mLinkLengths);
         mTotalLength = 0;
         for (double l: mLinkLengths)
@@ -92,10 +94,40 @@ TEST_F(Manip5DofTest, TestForwardKinematics2)
     }
 }
 
-// TEST_F(Manip5DofTest, TestForwardDifferentialKinematics1)
-// {
-//     std::vector<double> q {M_PI, 0, 0, 0, 0};
-//     mManip->CommandJointConfig(q);
-//     mManip->StepModel();
-//     Eigen::Matrix4d fk_calculated = mManip->GetPose();
-// }
+TEST_F(Manip5DofTest, TestForwardDifferentialKinematics1)
+{
+    // Set sim clock to very high frequency so joint pos doesnt change much per step
+    SimClock& c = SimClock::GetInstance();
+    c.SetSimFreq(1000);
+
+    // In null config, twist should have translational component in pos y direction
+    std::vector<double> q_dot {0, 0, 0, 0, M_PI};
+    mManip->CommandJointVel(q_dot);
+    mManip->StepModel();
+
+    TwistType expected_twist {0, M_PI, 0, 0, 0, M_PI};
+    TwistType dk_twist = mManip->GetTwist();
+
+    for (int i = 0; i < 6; i++)
+    {
+        ASSERT_NEAR(dk_twist[i], expected_twist[i], ERROR_BOUND);
+    }
+
+    // Reset, then set joint vel to first joint
+    std::vector<double> q {0, 0, 0, 0, 0};
+    q_dot[0] = M_PI;
+    q_dot[4] = 0;
+
+    mManip->CommandJointConfig(q);
+    mManip->StepModel();
+    mManip->CommandJointVel(q_dot);
+    mManip->StepModel();
+
+    expected_twist[1] = mTotalLength * M_PI;
+    dk_twist = mManip->GetTwist();
+
+    for (int i = 0; i < 6; i++)
+    {
+        ASSERT_NEAR(dk_twist[i], expected_twist[i], ERROR_BOUND);
+    }
+}

@@ -11,6 +11,11 @@ void JointControllerBase::Initialize(
     mThetaDot = t_dot;
     mThetaDdot = t_ddot;
     mEffort = e;
+
+    mCommandTime = mClock.GetSimTime();
+
+    mJointCommand = t;
+    mStartingJointState = t;
 }
 
 void JointControllerBase::PositionCommand(const Eigen::VectorXd& t_c)

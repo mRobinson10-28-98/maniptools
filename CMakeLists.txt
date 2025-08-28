@@ -25,7 +25,8 @@ include_directories(${PROJECT_SOURCE_DIR}/include/JointController)
 
 # Manipulator toolset; twists and other LA functions
 add_library(maniptools 
-  src/skew.cpp 
+  src/Common.cpp
+  src/DualNumberTools.cpp
   src/TwistJoint.cpp 
   src/ManipNDof.cpp
   src/JointController/JointControllerBase.cpp
@@ -38,6 +39,8 @@ add_library(maniptools
 
 add_executable(my_test src/my_test.cpp)
 target_link_libraries(my_test maniptools)
+add_executable(manip5dof_tracecircle src/manip5dof_tracecircle.cpp)
+target_link_libraries(manip5dof_tracecircle maniptools)
 
 install(TARGETS
   my_test

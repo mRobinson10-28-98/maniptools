@@ -2,7 +2,6 @@
 
 #include "Manip5Dof.hpp"
 
-
 Manip5Dof::Manip5Dof(I_JointController& jointController, std::array<double, 5> link_lengths): 
     ManipNDof(jointController)
 {

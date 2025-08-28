@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "skew.hpp"
+#include "Common.hpp"
 #include "ManipNDof.hpp"
 
 ManipNDof::ManipNDof(I_JointController& jointController): mJointController(jointController)
