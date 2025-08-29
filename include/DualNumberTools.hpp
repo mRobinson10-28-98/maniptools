@@ -55,6 +55,8 @@ namespace DualNumberTools
 
         DualQuaternion(Eigen::Quaterniond r, Eigen::Quaterniond d);
         DualQuaternion(DualNumber n, DualVector v);
+        DualQuaternion(Eigen::Matrix3d rot, Eigen::Vector3d pos);
+        DualQuaternion(Eigen::Matrix4d transform);
 
         DualQuaternion operator+(const DualQuaternion other) const;
         DualQuaternion operator-(const DualQuaternion other) const;

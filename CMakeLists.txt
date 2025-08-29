@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.8)
 project(maniptools)
+add_compile_options(-g)
 
 # GoogleTest requires at least C++17
 set(CMAKE_CXX_STANDARD 17)
@@ -34,6 +35,7 @@ add_library(maniptools
   src/JointController/JointControllerStepResponse.cpp
   src/Manip5Dof.cpp
   src/SimClock.cpp
+  src/PathPlanningTools.cpp
 )
 
 
@@ -61,6 +63,7 @@ add_executable(maniptools_test
     test/simclock_test.cpp
     test/joint_controller_test.cpp
     test/dual_numbers_test.cpp
+    test/sclerp_test.cpp
 )
 target_link_libraries(maniptools_test GTest::gtest_main maniptools)
 target_include_directories(maniptools_test PUBLIC ${PROJECT_SOURCE_DIR}/test)
