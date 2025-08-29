@@ -13,12 +13,13 @@ using namespace DualNumberTools;
 
 int main()
 {
-    DualNumber d1(1,2);
-    DualNumber d2(3,4);
+    Eigen::Quaterniond q1 {0, 1, 2, 3};
+    Eigen::Quaterniond q2 {0, 1, 2, 3};
 
-    DualNumber d_sum = d1 + d2;
-    DualNumber d_prod = d1 * d2;
+    Eigen::Quaterniond q_prod = q1 * q2.conjugate();
+    std::cout << "Quat prod: \n" << q_prod << "\n\n";
 
-    std::cout << d_sum.real << ", " << d_sum.dual << "\n\n";
-    std::cout << d_prod.real << ", " << d_prod.dual << "\n\n";
+    DualQuaternion a;
+    DualQuaternion b;
+    DualQuaternion c = a + b;
 }

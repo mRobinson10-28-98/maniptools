@@ -17,6 +17,8 @@ namespace DualNumberTools
 
         DualNumber operator*(const DualNumber other) const;
 
+        bool operator==(const DualNumber other) const;
+
         double real;
         double dual;
     };
@@ -39,6 +41,8 @@ namespace DualNumberTools
         // Dual number * dual vector product = dual vector
         DualVector operator*(const DualNumber other) const;
 
+        bool operator==(const DualVector other) const;
+
         DualVector cross(DualVector d) const;
 
         Eigen::Vector3d real;
@@ -50,11 +54,30 @@ namespace DualNumberTools
         DualQuaternion();
 
         DualQuaternion(Eigen::Quaterniond r, Eigen::Quaterniond d);
+        DualQuaternion(DualNumber n, DualVector v);
+
+        DualQuaternion operator+(const DualQuaternion other) const;
+        DualQuaternion operator-(const DualQuaternion other) const;
+        DualQuaternion operator*(const DualQuaternion other) const;
+
+        DualQuaternion pow(double t) const;
+
+        // // Accessors
+        DualNumber scalar() const;
+        DualVector vector() const;
+        DualQuaternion conjugate() const;
+
+        // Pose accessors
+        Eigen::Vector3d PositionVector() const;
+        Eigen::Matrix3d RotationMatrix() const;
+        Eigen::Matrix4d TransformationMatrix() const;
 
         Eigen::Quaterniond real;
         Eigen::Quaterniond dual;
     };
 
+    Eigen::Quaterniond AddQuaternions(Eigen::Quaterniond q1, Eigen::Quaterniond q2);
+    Eigen::Quaterniond ScalarMultiplyQuaternion(Eigen::Quaterniond q, double d);
 
 } // end DualNumberTools
 
