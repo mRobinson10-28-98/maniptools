@@ -307,9 +307,9 @@ TEST(DualNumberTools_test, QuaternionConjugate)
 TEST(DualNumberTools_test, QuaternionPower)
 {
     Eigen::Vector3d x_axis(1.0, 0.0, 0.0);
-    Eigen::AngleAxisd aa1(M_PI/2, x_axis);
+    Eigen::AngleAxisd aa1(M_PI/4, x_axis);
     Eigen::Matrix3d rot(aa1);
-    Eigen::Vector3d pos(1, 0, 0);
+    Eigen::Vector3d pos(2, 0, 0);
     Eigen::Matrix4d transform = Eigen::Matrix4d::Identity();
     transform.block(0, 0, 3, 3) = rot;
     transform(0, 3) = pos(0);
@@ -322,13 +322,18 @@ TEST(DualNumberTools_test, QuaternionPower)
     Eigen::Vector3d pos_pow = q_pow.PositionVector();
     Eigen::Matrix3d rot_pow = q_pow.RotationMatrix();
 
+    std::cout << "REAL: \n" << q.real << "\n\n";
+    std::cout << "DUAL: \n" << q.dual << "\n\n";
+    std::cout << "POW REAL: \n" << q_pow.real << "\n\n";
+    std::cout << "POW DUAL: \n" << q_pow.dual << "\n\n";
+
     std::cout << "Pos power: \n" << pos_pow << "\n\n";
     std::cout << "Rot power: \n" << rot_pow << "\n\n";
 
     // Expectations
-    Eigen::AngleAxisd aa_pow(M_PI, x_axis);
+    Eigen::AngleAxisd aa_pow(M_PI/2, x_axis);
     Eigen::Matrix3d rot_pow_exp(aa_pow);
-    Eigen::Vector3d pos_pow_exp(2, 0, 0);
+    Eigen::Vector3d pos_pow_exp(4, 0, 0);
 
     // Test
     ASSERT_NEAR(pos_pow(0), pos_pow_exp(0), ERROR_BOUND);

@@ -27,6 +27,8 @@ namespace DualNumberTools
     {
         DualVector();
 
+        DualVector(DualNumber dn1, DualNumber dn2, DualNumber dn3);
+
         DualVector(Eigen::Vector3d r, Eigen::Vector3d d);
 
         DualNumber operator[](std::size_t index) const;

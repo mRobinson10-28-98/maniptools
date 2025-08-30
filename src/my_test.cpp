@@ -23,9 +23,19 @@ int main()
     Eigen::AngleAxisd aa(M_PI/2, z_axis);
     Eigen::Matrix3d rot(aa);
     Eigen::AngleAxisd aa_copy(rot);
+    Eigen::Vector3d pos(1, 0, 0);
+
+    DualQuaternion q_dual(rot, pos);
+    std::cout << "Real: \n" << q_dual.real << "\n\n";
+    std::cout << "Real norm: \n" << q_dual.real.norm() << "\n\n";
+    std::cout << "Dual: \n" << q_dual.dual << "\n\n";
+    std::cout << "Dual norm: \n" << q_dual.dual.norm() << "\n\n";
+    std::cout << "Dual normalized: \n" << ScalarMultiplyQuaternion(q_dual.dual, (1/q_dual.dual.norm())) << "\n\n";
 
     Eigen::Quaterniond q_rot(aa_copy);
     std::cout << "Quat from rot: \n" << q_rot << "\n\n";
+    std::cout << "Quat from rot norm: \n" << q_rot.norm() << "\n\n";
+    std::cout << "Quat from rot normlize: \n" << ScalarMultiplyQuaternion(q_rot, (1/q_rot.norm())) << "\n\n";
     std::cout << "Rotation matrix: \n" << rot << "\n\n";
 
     std::cout << rot(0,1) << std::endl;

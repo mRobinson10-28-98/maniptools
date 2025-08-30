@@ -60,6 +60,16 @@ DualVector::DualVector(Eigen::Vector3d r, Eigen::Vector3d d)
     dual = d;
 }
 
+DualVector::DualVector(DualNumber dn1, DualNumber dn2, DualNumber dn3)
+{
+    real(0) = dn1.real;
+    dual(0) = dn1.dual;
+    real(1) = dn2.real;
+    dual(1) = dn2.dual;
+    real(2) = dn3.real;
+    dual(2) = dn3.dual;
+}
+
 DualNumber DualVector::operator[](std::size_t index) const
 {
     if (index >= 3) throw std::out_of_range("Dual Vector index out of range");
@@ -91,10 +101,11 @@ DualNumber DualVector::operator*(const DualVector other) const
 // Dual number * dual vector product = dual vector
 DualVector DualVector::operator*(const DualNumber other) const 
 {
-    DualVector d_prod;
-    d_prod[0] = other * (*this)[0];
-    d_prod[1] = other * (*this)[1];
-    d_prod[2] = other * (*this)[2];
+    DualVector d_prod(
+        other * (*this)[0],
+        other * (*this)[1],
+        other * (*this)[2]
+    );
 
     return d_prod;
 }
@@ -136,6 +147,8 @@ DualQuaternion::DualQuaternion(DualNumber n, DualVector v)
     real.vec() = v.real;
     dual.w() = n.dual;
     dual.vec() = v.dual;
+
+    real = ScalarMultiplyQuaternion(real, (1/real.norm()));
 }
 
 DualQuaternion::DualQuaternion(Eigen::Matrix3d rot, Eigen::Vector3d pos)
@@ -143,7 +156,7 @@ DualQuaternion::DualQuaternion(Eigen::Matrix3d rot, Eigen::Vector3d pos)
     Eigen::AngleAxisd angle_axis(rot);
     real = Eigen::Quaterniond(angle_axis);
     Eigen::Quaterniond p_quat {0, pos[0], pos[1], pos[2]};
-    dual = ScalarMultiplyQuaternion(p_quat, 0.5) * real;
+    dual = ScalarMultiplyQuaternion(p_quat * real, 0.5);
 }
 
 DualQuaternion::DualQuaternion(Eigen::Matrix4d transform)
@@ -155,7 +168,8 @@ DualQuaternion::DualQuaternion(Eigen::Matrix4d transform)
     Eigen::AngleAxisd angle_axis(rot);
     real = Eigen::Quaterniond(angle_axis);
     Eigen::Quaterniond p_quat {0, pos[0], pos[1], pos[2]};
-    dual = ScalarMultiplyQuaternion(p_quat, 0.5) * real;}
+    dual = ScalarMultiplyQuaternion(p_quat * real, 0.5);
+}
 
 DualQuaternion DualQuaternion::operator+(const DualQuaternion other) const
 {
@@ -254,9 +268,11 @@ DualQuaternion DualQuaternion::pow(double t) const
 
     Eigen::Quaterniond p_quat = ScalarMultiplyQuaternion(dual * real.conjugate(), 2);
     Eigen::Vector3d p(p_quat.x(), p_quat.y(), p_quat.z());
+    std::cout << "TEST p: \n" << p << "\n\n";
     double d = p.dot(u);
     double h = d / theta;
-    Eigen::Vector3d m = 0.5 * (p.cross(u) + h * u);
+    // Eigen::Vector3d m = 0.5 * (p.cross(u) + h * u);
+    Eigen::Vector3d m = 0.5 * p.cross(u) + (p - d * u) * (1/std::tan(theta/2));
 
     DualVector u_hat;
     u_hat.real = u;
@@ -269,6 +285,15 @@ DualQuaternion DualQuaternion::pow(double t) const
     A_vn.dual = ((t * d)/2) * std::cos((t * theta)/2);
 
     DualVector A_v = u_hat * A_vn;
+
+    std::cout << "theta: \n" << theta << "\n\n";
+    std::cout << "u \n" << u << "\n\n";
+    std::cout << "m \n" << m << "\n\n";
+    std::cout << "d: \n" << d << "\n\n";
+    std::cout << "h: \n" << h << "\n\n";
+    std::cout << "A_n.real \n" << A_n.real << "\n\n";
+    std::cout << "A_vn.real \n" << A_vn.real << "\n\n";
+    std::cout << "A_v.real \n" << A_v.real << "\n\n";
 
     DualQuaternion q(A_n, A_v);
     return q;
