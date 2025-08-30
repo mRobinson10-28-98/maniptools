@@ -322,14 +322,6 @@ TEST(DualNumberTools_test, QuaternionPower)
     Eigen::Vector3d pos_pow = q_pow.PositionVector();
     Eigen::Matrix3d rot_pow = q_pow.RotationMatrix();
 
-    std::cout << "REAL: \n" << q.real << "\n\n";
-    std::cout << "DUAL: \n" << q.dual << "\n\n";
-    std::cout << "POW REAL: \n" << q_pow.real << "\n\n";
-    std::cout << "POW DUAL: \n" << q_pow.dual << "\n\n";
-
-    std::cout << "Pos power: \n" << pos_pow << "\n\n";
-    std::cout << "Rot power: \n" << rot_pow << "\n\n";
-
     // Expectations
     Eigen::AngleAxisd aa_pow(M_PI/2, x_axis);
     Eigen::Matrix3d rot_pow_exp(aa_pow);

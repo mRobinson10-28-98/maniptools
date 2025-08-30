@@ -252,31 +252,27 @@ DualQuaternion DualQuaternion::pow(double t) const
     // qd_t = ScalarMultiplyQuaternion(qd_t * qr_t, 0.5);
 
     // return DualQuaternion(qr_t, qd_t);
+    Eigen::Vector3d p = PositionVector();
+    std::cout << "TEST p: \n" << p << "\n\n";
 
     Eigen::Vector3d x_axis(1, 0, 0);
     double theta = 2 * std::acos(real.w());
-    Eigen::Vector3d u = x_axis;
-
+    Eigen::Vector3d u, m; 
+    double d;
     if (std::abs(theta) < 1e-6)
     {
-        u = x_axis;
+        u = p;
+        d = 1;
+        m = Eigen::Vector3d::Zero();
     }
     else
     {
-        Eigen::Vector3d u = real.vec() * (1/std::sin(theta/2)); 
+        u = real.vec() * (1/std::sin(theta/2)); 
+        d = p.dot(u);
+        m = 0.5 * p.cross(u) + (p - d * u) * (1/std::tan(theta/2));
     }
 
-    Eigen::Quaterniond p_quat = ScalarMultiplyQuaternion(dual * real.conjugate(), 2);
-    Eigen::Vector3d p(p_quat.x(), p_quat.y(), p_quat.z());
-    std::cout << "TEST p: \n" << p << "\n\n";
-    double d = p.dot(u);
-    double h = d / theta;
-    // Eigen::Vector3d m = 0.5 * (p.cross(u) + h * u);
-    Eigen::Vector3d m = 0.5 * p.cross(u) + (p - d * u) * (1/std::tan(theta/2));
-
-    DualVector u_hat;
-    u_hat.real = u;
-    u_hat.dual = m;
+    DualVector u_hat(u, m);
 
     DualNumber A_n, A_vn;
     A_n.real = std::cos((t * theta)/2);
@@ -285,17 +281,26 @@ DualQuaternion DualQuaternion::pow(double t) const
     A_vn.dual = ((t * d)/2) * std::cos((t * theta)/2);
 
     DualVector A_v = u_hat * A_vn;
+    DualQuaternion q(A_n, A_v);
 
     std::cout << "theta: \n" << theta << "\n\n";
     std::cout << "u \n" << u << "\n\n";
     std::cout << "m \n" << m << "\n\n";
     std::cout << "d: \n" << d << "\n\n";
-    std::cout << "h: \n" << h << "\n\n";
     std::cout << "A_n.real \n" << A_n.real << "\n\n";
     std::cout << "A_vn.real \n" << A_vn.real << "\n\n";
+    std::cout << "A_vn.dual \n" << A_vn.dual << "\n\n";
     std::cout << "A_v.real \n" << A_v.real << "\n\n";
+    std::cout << "A_v.dual \n" << A_v.dual << "\n\n";
+    std::cout << "A_v = \n";
+    std::cout << "(" << u(0) << " + " << m(0) << ")" << " * " << "(" << A_vn.real << " + " << A_vn.dual << ")\n";
+    std::cout << "(" << u(1) << " + " << m(1) << ")\n";
+    std::cout << "(" << u(2) << " + " << m(2) << ")\n";
+    std::cout << "q.real \n" << q.real << "\n\n";
+    std::cout << "Rot: \n" << q.RotationMatrix() << "\n\n";
+    std::cout << "q.dual \n" << q.dual << "\n\n";
+    std::cout << "Pos vector: \n" << q.PositionVector() << "\n\n";
 
-    DualQuaternion q(A_n, A_v);
     return q;
 }
 
