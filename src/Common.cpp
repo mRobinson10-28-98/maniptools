@@ -11,6 +11,17 @@ Eigen::Matrix3d skew3d(Eigen::Vector3d v)
     return skew_symetric;
 }
 
+Eigen::Matrix<double, 3, 4> skewQuat(Eigen::Quaterniond q)
+{
+    Eigen::Matrix<double, 3, 4> skew_symetric {
+        {-q.x(), q.w(), q.z(), -q.y()}, 
+        {-q.y(), -q.z(), q.w(), q.x()}, 
+        {-q.z(), q.y(), -q.x(), q.w()}
+    };
+    
+    return skew_symetric;
+}
+
 // template<typename MatrixType>
 Eigen::MatrixXd PseudoInverse(Eigen::MatrixXd mat)
 {

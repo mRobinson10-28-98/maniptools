@@ -48,7 +48,7 @@ protected:
 // Test1 - at null joint config, check forward kinematics transform
 TEST_F(Manip5DofTest, TestForwardKinematics1)
 {
-    std::vector<double> q {0, 0, 0, 0, 0};
+    Eigen::Vector<double, 5> q {0, 0, 0, 0, 0};
     mManip->CommandJointConfig(q);
     mManip->StepModel();
     Eigen::Matrix4d fk_calculated = mManip->GetPose();
@@ -73,7 +73,7 @@ TEST_F(Manip5DofTest, TestForwardKinematics1)
 // Test2 - rotate j0 180d and check forward kinematics transform
 TEST_F(Manip5DofTest, TestForwardKinematics2)
 {
-    std::vector<double> q {M_PI, 0, 0, 0, 0};
+    Eigen::Vector<double, 5> q {M_PI, 0, 0, 0, 0};
     mManip->CommandJointConfig(q);
     mManip->StepModel();
     Eigen::Matrix4d fk_calculated = mManip->GetPose();
@@ -101,7 +101,7 @@ TEST_F(Manip5DofTest, TestForwardDifferentialKinematics1)
     c.SetSimFreq(1000);
 
     // In null config, twist should have translational component in pos y direction
-    std::vector<double> q_dot {0, 0, 0, 0, M_PI};
+    Eigen::Vector<double, 5> q_dot {0, 0, 0, 0, M_PI};
     mManip->CommandJointVel(q_dot);
     mManip->StepModel();
 
@@ -114,7 +114,7 @@ TEST_F(Manip5DofTest, TestForwardDifferentialKinematics1)
     }
 
     // Reset, then set joint vel to first joint
-    std::vector<double> q {0, 0, 0, 0, 0};
+    Eigen::Vector<double, 5> q {0, 0, 0, 0, 0};
     q_dot[0] = M_PI;
     q_dot[4] = 0;
 

@@ -12,6 +12,7 @@ enum ControlType
 };
 
 Eigen::Matrix3d skew3d(Eigen::Vector3d v);
+Eigen::Matrix<double, 3, 4> skewQuat(Eigen::Quaterniond q);
 
 Eigen::MatrixXd PseudoInverse(Eigen::MatrixXd m);
 

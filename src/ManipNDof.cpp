@@ -1,7 +1,12 @@
 #include <iostream>
 
 #include "Common.hpp"
+#include "DualNumberTools.hpp"
 #include "ManipNDof.hpp"
+#include "PathPlanningTools.hpp"
+
+using namespace DualNumberTools;
+using namespace PathPlanningTools;
 
 ManipNDof::ManipNDof(I_JointController& jointController): mJointController(jointController)
 {
@@ -65,7 +70,7 @@ void ManipNDof::SetRunFrequency(double f)
     mClock.SetSimFreq(f);
 }
 
-void ManipNDof::CommandJointConfig(std::vector<double> thetas)
+void ManipNDof::CommandJointConfig(Eigen::VectorXd thetas)
 {
     if(mDof != thetas.size())
     {
@@ -82,7 +87,7 @@ void ManipNDof::CommandJointConfig(std::vector<double> thetas)
     mControlType = POSITION_CONTROL_TYPE;
 }
 
-void ManipNDof::CommandJointVel(std::vector<double> thetas)
+void ManipNDof::CommandJointVel(Eigen::VectorXd thetas)
 {
     if(mDof != thetas.size())
     {
@@ -108,6 +113,56 @@ void ManipNDof::StepModel()
     // Calculate manipulator
     Fk();
     Dk();
+}
+
+void ManipNDof::CommandJointConfigScLERP(Eigen::Matrix4d poseFinal, double interpParam)
+{
+    // Current and final pose dual-quat
+    DualQuaternion q_t(mGt);
+    DualQuaternion q_f(poseFinal);
+
+    // ScLERP
+    DualQuaternion pose_i = ScLERP(q_t, q_f, interpParam);
+    
+    // Deconstruct poses
+    Eigen::Vector3d p_t = q_t.PositionVector();
+    Eigen::Quaterniond q_r_t = q_t.real;
+    Eigen::Vector3d p_i = pose_i.PositionVector();
+    Eigen::Quaterniond q_r_i = pose_i.real;
+
+    // Calculate pose vectors
+    Eigen::Vector<double,7> pose_vector_t(
+        p_t(0),
+        p_t(1),
+        p_t(2),
+        q_r_t.w(),
+        q_r_t.x(),
+        q_r_t.y(),
+        q_r_t.z()
+    );
+
+    Eigen::Vector<double,7> pose_vector_i(
+        p_i(0),
+        p_i(1),
+        p_i(2),
+        q_r_i.w(),
+        q_r_i.x(),
+        q_r_i.y(),
+        q_r_i.z()
+    );
+
+    // Calculate pose vector Jacobian 'B'
+    Eigen::Matrix<double, 6, 7> J2;
+    J2.block(0, 0, 3, 3) = Eigen::Matrix3d::Identity();
+    J2.block(3, 0, 3, 3) = Eigen::Matrix3d::Zero();
+    J2.block(0, 3, 3, 4) = 2 * skew3d(p_t) * skewQuat(q_r_t);
+    J2.block(3, 3, 3, 4) = 2 * skewQuat(q_r_t);
+    Eigen::MatrixXd B = PseudoInverse(mSAJacobian) * J2;
+
+    // Calculate next joint config
+    Eigen::VectorXd theta_dot = B * (pose_vector_i - pose_vector_t);
+    Eigen::VectorXd theta_i = mTheta + (0.5 * theta_dot) / mClock.GetSimFreq();
+    CommandJointConfig(theta_i);
 }
 
 void ManipNDof::Fk()
