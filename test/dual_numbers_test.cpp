@@ -7,7 +7,74 @@ using namespace DualNumberTools;
 
 const double ERROR_BOUND = 1e-6;
 
-TEST(DualNumberTools_test, DualNumberMath)
+class DualNumberToolsTest : public ::testing::Test
+{
+protected:
+    Eigen::Vector3d x_axis {1.0, 0.0, 0.0};
+    Eigen::Vector3d y_axis {0.0, 1.0, 0.0};
+    Eigen::Vector3d z_axis {0.0, 0.0, 1.0};
+
+    Eigen::Matrix3d R_x;
+    Eigen::Matrix3d R_y;
+    Eigen::Matrix3d R_z;
+
+    Eigen::Matrix4d Transform(Eigen::Matrix3d R, Eigen::Vector3d p)
+    {
+        Eigen::Matrix4d transform = Eigen::Matrix4d::Identity();
+        transform.block(0, 0, 3, 3) = R;
+        transform(0, 3) = p(0);
+        transform(1, 3) = p(1);
+        transform(2, 3) = p(2);
+        return transform;
+    }
+
+    // Compare calculated rotation matrix to expected rotation matrix
+    void Test_Rot(Eigen::Matrix3d R_calc, Eigen::Matrix3d R_exp)
+    {
+        for (int row = 0; row < 3; row++)
+        {
+            for (int col = 0; col < 3; col++)
+            {
+                ASSERT_NEAR(R_calc(row, col), R_exp(row, col), ERROR_BOUND);
+            }
+        }
+    }
+
+    // Compare calculated position vector to expected
+    void Test_Pos(Eigen::Vector3d pos_calc, Eigen::Vector3d pos_exp)
+    {
+        ASSERT_NEAR(pos_calc(0), pos_exp(0), ERROR_BOUND);
+        ASSERT_NEAR(pos_calc(1), pos_exp(1), ERROR_BOUND);
+        ASSERT_NEAR(pos_calc(2), pos_exp(2), ERROR_BOUND);
+    }
+
+    // Compare calculated transformation matrix to expected
+    void Test_Transform(Eigen::Matrix4d T_calc, Eigen::Matrix4d T_exp)
+    {
+        for (int row = 0; row < 4; row++)
+        {
+            for (int col = 0; col < 4; col++)
+            {
+                ASSERT_NEAR(T_calc(row, col), T_exp(row, col), ERROR_BOUND);
+            }
+        }
+    }
+
+    // Setup test object
+    void SetUp() override 
+    {
+        R_x = Eigen::AngleAxisd(M_PI/4, x_axis);
+        R_y = Eigen::AngleAxisd(M_PI/4, y_axis);
+        R_z = Eigen::AngleAxisd(M_PI/4, z_axis);
+    }
+
+    void TearDown() override
+    {
+
+    }
+};
+
+TEST_F(DualNumberToolsTest, DualNumberMath)
 {
     // Reference:
     // d1 = a + bi
@@ -35,7 +102,7 @@ TEST(DualNumberTools_test, DualNumberMath)
     ASSERT_EQ(d1 == d1_copy, true);
 }
 
-TEST(DualNumberTools_test, DualVectorMath)
+TEST_F(DualNumberToolsTest, DualVectorMath)
 {
     // Reference:
     // v1 = a + bi
@@ -75,115 +142,59 @@ TEST(DualNumberTools_test, DualVectorMath)
     ASSERT_EQ(v1 == v1_copy, true);
 }
 
-TEST(DualNumberTools_test, ConstructQuaternions)
+TEST_F(DualNumberToolsTest, ConstructQuaternions)
 {
-    Eigen::Vector3d z_axis(0.0, 0.0, 1.0);
-    Eigen::AngleAxisd aa(M_PI/2, z_axis);
-    Eigen::Matrix3d rot(aa);
     Eigen::Vector3d pos(1.0, 2.0, 3.0);
-    Eigen::Matrix4d transform = Eigen::Matrix4d::Identity();
-    transform.block(0, 0, 3, 3) = rot;
-    transform(0, 3) = pos(0);
-    transform(1, 3) = pos(1);
-    transform(2, 3) = pos(2);
+    Eigen::Matrix4d transform = Transform(R_z, pos);
 
-    DualQuaternion q1(rot, pos);
+    DualQuaternion q1(R_z, pos);
     DualQuaternion q2(transform);
 
     // Q1
     Eigen::Vector3d q1_pos_from_function = q1.PositionVector();
     Eigen::Matrix3d q1_rot_from_function = q1.RotationMatrix();
-    Eigen::Matrix4d q1_trans_from_function = q1.TransformationMatrix();
+    Eigen::Matrix4d q1_transform_from_function = q1.TransformationMatrix();
     // Q2
     Eigen::Vector3d q2_pos_from_function = q2.PositionVector();
     Eigen::Matrix3d q2_rot_from_function = q2.RotationMatrix();
-    Eigen::Matrix4d q2_trans_from_function = q2.TransformationMatrix();
+    Eigen::Matrix4d q2_transform_from_function = q2.TransformationMatrix();
 
-    // Bottom row of SE(3) transformation matrix is <0,0,0,1>
-    // Q1
-    ASSERT_EQ(q1_trans_from_function(3, 0), 0);
-    ASSERT_EQ(q1_trans_from_function(3, 1), 0);
-    ASSERT_EQ(q1_trans_from_function(3, 2), 0);
-    ASSERT_EQ(q1_trans_from_function(3, 3), 1);
-    // Q2
-    ASSERT_EQ(q2_trans_from_function(3, 0), 0);
-    ASSERT_EQ(q2_trans_from_function(3, 1), 0);
-    ASSERT_EQ(q2_trans_from_function(3, 2), 0);
-    ASSERT_EQ(q2_trans_from_function(3, 3), 1);
 
-    // Check position
-    for (int comp = 0; comp < 3; comp++)
-    {
-        // Q1
-        ASSERT_NEAR(q1_pos_from_function(comp), pos(comp), ERROR_BOUND);
-        ASSERT_NEAR(q1_trans_from_function(comp, 3), pos(comp), ERROR_BOUND);
-        // Q2
-        ASSERT_NEAR(q2_pos_from_function(comp), pos(comp), ERROR_BOUND);
-        ASSERT_NEAR(q2_trans_from_function(comp, 3), pos(comp), ERROR_BOUND);
-    }
+    // Check positions
+    Test_Pos(q1_pos_from_function, pos);
+    Test_Pos(q2_pos_from_function, pos);
 
-    // Check rotation matrix
-    for (int row = 0; row < 3; row++)
-    {
-        for (int col = 0; col < 3; col++)
-        {
-            // Q1
-            ASSERT_NEAR(q1_rot_from_function(row, col), rot(row, col), ERROR_BOUND);
-            ASSERT_NEAR(q1_trans_from_function(row, col), rot(row, col), ERROR_BOUND);
-            // Q2
-            ASSERT_NEAR(q2_rot_from_function(row, col), rot(row, col), ERROR_BOUND);
-            ASSERT_NEAR(q2_trans_from_function(row, col), rot(row, col), ERROR_BOUND);
-        }
-    }
+    // Check rotation matrices
+    Test_Rot(q1_rot_from_function, R_z);
+    Test_Rot(q2_rot_from_function, R_z); 
 
+    // Check transformation matrices
+    Test_Transform(q1_transform_from_function, transform);
+    Test_Transform(q2_transform_from_function, transform);
 }
 
-TEST(DualNumberTools_test, QuaternionProducts_Rotate)
+TEST_F(DualNumberToolsTest, QuaternionProducts_Rotate)
 {
-    Eigen::Vector3d z_axis(0.0, 0.0, 1.0);
-    Eigen::AngleAxisd aa1(M_PI/2, z_axis);
-    Eigen::Matrix3d rot_input(aa1);
     Eigen::Vector3d pos = Eigen::Vector3d::Zero();
 
-    DualQuaternion q1(rot_input, pos);
+    DualQuaternion q1(R_z, pos);
     DualQuaternion q_prod = q1 * q1;
     Eigen::Matrix3d rot_calculated = q_prod.RotationMatrix();
     Eigen::Vector3d pos_calculated = q_prod.PositionVector();
 
 
     // Expected
-    Eigen::AngleAxisd aa2(M_PI, z_axis);
-    Eigen::Matrix3d rot_expected = rot_input * rot_input;
-    DualQuaternion q_exp(rot_expected, pos);
+    Eigen::Matrix3d rot_expected = R_z * R_z;
 
     // Position
-    ASSERT_NEAR(q_prod.dual.w(), q_exp.dual.w(), ERROR_BOUND);
-    ASSERT_NEAR(q_prod.dual.x(), q_exp.dual.x(), ERROR_BOUND);
-    ASSERT_NEAR(q_prod.dual.y(), q_exp.dual.y(), ERROR_BOUND);
-    ASSERT_NEAR(q_prod.dual.z(), q_exp.dual.z(), ERROR_BOUND);
-    ASSERT_NEAR(pos_calculated(0), 0, ERROR_BOUND);
-    ASSERT_NEAR(pos_calculated(1), 0, ERROR_BOUND);
-    ASSERT_NEAR(pos_calculated(2), 0, ERROR_BOUND);
-
-
-    // Orientation
-    ASSERT_NEAR(q_prod.real.w(), q_exp.real.w(), ERROR_BOUND);
-    ASSERT_NEAR(q_prod.real.x(), q_exp.real.x(), ERROR_BOUND);
-    ASSERT_NEAR(q_prod.real.y(), q_exp.real.y(), ERROR_BOUND);
-    ASSERT_NEAR(q_prod.real.z(), q_exp.real.z(), ERROR_BOUND);
+    Test_Pos(pos_calculated, pos);
 
     // Check rotation matrix
-    for (int row = 0; row < 3; row++)
-    {
-        for (int col = 0; col < 3; col++)
-        {
-            ASSERT_NEAR(rot_calculated(row, col), rot_expected(row, col), ERROR_BOUND);
-        }
-    }
+    Test_Rot(rot_calculated, rot_expected);
 }
 
 
-TEST(DualNumberTools_test, QuaternionProducts_Translate)
+TEST_F(DualNumberToolsTest, QuaternionProducts_Translate)
 {
     Eigen::Matrix3d rot = Eigen::Matrix3d::Identity();
     Eigen::Vector3d pos1(1, 2, 3);
@@ -198,124 +209,46 @@ TEST(DualNumberTools_test, QuaternionProducts_Translate)
     // Expected
     Eigen::Vector3d pos_expected(5, 7, 9);
     Eigen::Matrix3d rot_expected = Eigen::Matrix3d::Identity();
-    DualQuaternion q_exp(rot, pos_expected);
 
     // Position
-    ASSERT_NEAR(q_prod.dual.w(), q_exp.dual.w(), ERROR_BOUND);
-    ASSERT_NEAR(q_prod.dual.x(), q_exp.dual.x(), ERROR_BOUND);
-    ASSERT_NEAR(q_prod.dual.y(), q_exp.dual.y(), ERROR_BOUND);
-    ASSERT_NEAR(q_prod.dual.z(), q_exp.dual.z(), ERROR_BOUND);
-    ASSERT_NEAR(pos_calculated(0), pos_expected(0), ERROR_BOUND);
-    ASSERT_NEAR(pos_calculated(1), pos_expected(1), ERROR_BOUND);
-    ASSERT_NEAR(pos_calculated(2), pos_expected(2), ERROR_BOUND);
-
-
-    // Orientation
-    ASSERT_NEAR(q_prod.real.w(), q_exp.real.w(), ERROR_BOUND);
-    ASSERT_NEAR(q_prod.real.x(), q_exp.real.x(), ERROR_BOUND);
-    ASSERT_NEAR(q_prod.real.y(), q_exp.real.y(), ERROR_BOUND);
-    ASSERT_NEAR(q_prod.real.z(), q_exp.real.z(), ERROR_BOUND);
+    Test_Pos(pos_calculated, pos_expected);
 
     // Check rotation matrix
-    for (int row = 0; row < 3; row++)
-    {
-        for (int col = 0; col < 3; col++)
-        {
-            ASSERT_NEAR(rot_calculated(row, col), rot_expected(row, col), ERROR_BOUND);
-        }
-    }
+    Test_Rot(rot_calculated, rot_expected);
 }
 
-TEST(DualNumberTools_test, QuaternionProducts_Transform)
+TEST_F(DualNumberToolsTest, QuaternionProducts_Transform)
 {
-    Eigen::Vector3d x_axis(1.0, 0.0, 0.0);
-    Eigen::Vector3d z_axis(0.0, 0.0, 1.0);
-    Eigen::AngleAxisd aa1(M_PI/2, z_axis);
-    Eigen::Matrix3d rot1(aa1);
-    Eigen::AngleAxisd aa2(M_PI/2, x_axis);
-    Eigen::Matrix3d rot2(aa2);
-
     Eigen::Vector3d pos1(1, 0, 0);
     Eigen::Vector3d pos2(0, 1, 1);
 
-    DualQuaternion q1(rot1, pos1);
-    DualQuaternion q2(rot2, pos2);
+    Eigen::Matrix3d R_z_90d = R_z * R_z;
+    Eigen::Matrix3d R_x_90d = R_x * R_x;
+
+    DualQuaternion q1(R_z_90d, pos1);
+    DualQuaternion q2(R_x_90d, pos2);
+
     DualQuaternion q_prod = q1 * q2;
     Eigen::Vector3d pos_calculated = q_prod.PositionVector();
     Eigen::Matrix3d rot_calculated = q_prod.RotationMatrix();
 
     // Expected
     Eigen::Vector3d pos_expected(0, 0, 1);
-    Eigen::Matrix3d rot_expected = rot1 * rot2;
+    Eigen::Matrix3d rot_expected = R_z_90d * R_x_90d;
 
     DualQuaternion q_exp(rot_expected, pos_expected);
 
     // Position
-    ASSERT_NEAR(pos_calculated(0), pos_expected(0), ERROR_BOUND);
-    ASSERT_NEAR(pos_calculated(1), pos_expected(1), ERROR_BOUND);
-    ASSERT_NEAR(pos_calculated(2), pos_expected(2), ERROR_BOUND);
+    Test_Pos(pos_calculated, pos_expected);
 
-
-    // Orientation
     // Check rotation matrix
-    for (int row = 0; row < 3; row++)
-    {
-        for (int col = 0; col < 3; col++)
-        {
-            ASSERT_NEAR(rot_calculated(row, col), rot_expected(row, col), ERROR_BOUND);
-        }
-    }
+    Test_Rot(rot_calculated, rot_expected);
 }
 
-TEST(DualNumberTools_test, QuaternionConjugate)
+TEST_F(DualNumberToolsTest, QuaternionPower_Translate)
 {
-    Eigen::Vector3d x_axis(1.0, 0.0, 0.0);
-    Eigen::AngleAxisd aa1(M_PI/2, x_axis);
-    Eigen::Matrix3d rot(aa1);
-    Eigen::Vector3d pos(1, 0, 0);
-    Eigen::Matrix4d transform = Eigen::Matrix4d::Identity();
-    transform.block(0, 0, 3, 3) = rot;
-    transform(0, 3) = pos(0);
-    transform(1, 3) = pos(1);
-    transform(2, 3) = pos(2);
-    DualQuaternion q(transform);
-
-    // Calculations
-    DualQuaternion q_conj = q.conjugate();
-    Eigen::Vector3d pos_inv = q_conj.PositionVector();
-    Eigen::Matrix3d rot_inv = q_conj.RotationMatrix();
-
-    // Expectations
-    Eigen::Matrix3d rot_inv_exp = rot.inverse();
-    Eigen::Vector3d pos_inv_exp(-1, 0, 0);
-
-    ASSERT_NEAR(pos_inv(0), pos_inv_exp(0), ERROR_BOUND);
-    ASSERT_NEAR(pos_inv(1), pos_inv_exp(1), ERROR_BOUND);
-    ASSERT_NEAR(pos_inv(2), pos_inv_exp(2), ERROR_BOUND);
-
-
-
-    for (int row = 0; row < 3; row++)
-    {
-        for (int col = 0; col < 3; col++)
-        {
-            ASSERT_NEAR(rot_inv(row, col), rot_inv_exp(row, col), ERROR_BOUND);
-        }
-    }
-}
-
-TEST(DualNumberTools_test, QuaternionPower)
-{
-    Eigen::Vector3d x_axis(1.0, 0.0, 0.0);
-    Eigen::AngleAxisd aa1(M_PI/4, x_axis);
-    Eigen::Matrix3d rot(aa1);
-    Eigen::Vector3d pos(2, 0, 0);
-    Eigen::Matrix4d transform = Eigen::Matrix4d::Identity();
-    transform.block(0, 0, 3, 3) = rot;
-    transform(0, 3) = pos(0);
-    transform(1, 3) = pos(1);
-    transform(2, 3) = pos(2);
-    DualQuaternion q(transform);
+    Eigen::Vector3d pos(2, 3, 4);
+    DualQuaternion q(Eigen::Matrix3d::Identity(), pos);
 
     // Calculations
     DualQuaternion q_pow = q.pow(2);
@@ -323,22 +256,101 @@ TEST(DualNumberTools_test, QuaternionPower)
     Eigen::Matrix3d rot_pow = q_pow.RotationMatrix();
 
     // Expectations
-    Eigen::AngleAxisd aa_pow(M_PI/2, x_axis);
-    Eigen::Matrix3d rot_pow_exp(aa_pow);
+    Eigen::Vector3d pos_pow_exp(4, 6, 8);
+    Eigen::Matrix3d rot_pow_exp = Eigen::Matrix3d::Identity();
+
+    // Position
+    Test_Pos(pos_pow, pos_pow_exp);
+
+    // Check rotation matrix
+    Test_Rot(rot_pow, rot_pow_exp);
+}
+
+TEST_F(DualNumberToolsTest, QuaternionPower_Rotatex)
+{
+    Eigen::Vector3d pos = Eigen::Vector3d::Zero();
+    DualQuaternion q(R_x, pos);
+
+    // Calculations
+    DualQuaternion q_pow = q.pow(2);
+    Eigen::Vector3d pos_pow = q_pow.PositionVector();
+    Eigen::Matrix3d rot_pow = q_pow.RotationMatrix();
+
+    // Expectations
+    Eigen::Vector3d pos_pow_exp = Eigen::Vector3d::Zero();
+    Eigen::Matrix3d rot_pow_exp = R_x * R_x;
+
+    // Position
+    Test_Pos(pos_pow, pos_pow_exp);
+
+    // Check rotation matrix
+    Test_Rot(rot_pow, rot_pow_exp);
+}
+
+TEST_F(DualNumberToolsTest, QuaternionPower_Rotateyz)
+{
+    Eigen::Vector3d pos = Eigen::Vector3d::Zero();
+    Eigen::Matrix3d R_yz = R_y * R_z;
+    DualQuaternion q(R_yz, pos);
+
+    // Calculations
+    DualQuaternion q_pow = q.pow(2);
+    Eigen::Vector3d pos_pow = q_pow.PositionVector();
+    Eigen::Matrix3d rot_pow = q_pow.RotationMatrix();
+
+    // Expectations
+    Eigen::Vector3d pos_pow_exp = Eigen::Vector3d::Zero();
+    Eigen::Matrix3d rot_pow_exp = R_yz * R_yz;
+
+    // Position
+    Test_Pos(pos_pow, pos_pow_exp);
+
+    // Check rotation matrix
+    Test_Rot(rot_pow, rot_pow_exp);
+}
+
+TEST_F(DualNumberToolsTest, QuaternionPower_RotxPosx)
+{
+    Eigen::Vector3d pos(2, 0, 0);
+    DualQuaternion q(R_x, pos);
+
+    // Calculations
+    DualQuaternion q_pow = q.pow(2);
+    Eigen::Vector3d pos_pow = q_pow.PositionVector();
+    Eigen::Matrix3d rot_pow = q_pow.RotationMatrix();
+
+    // Expectations
     Eigen::Vector3d pos_pow_exp(4, 0, 0);
+    Eigen::Matrix3d rot_pow_exp = R_x * R_x;
 
-    // Test
-    ASSERT_NEAR(pos_pow(0), pos_pow_exp(0), ERROR_BOUND);
-    ASSERT_NEAR(pos_pow(1), pos_pow_exp(1), ERROR_BOUND);
-    ASSERT_NEAR(pos_pow(2), pos_pow_exp(2), ERROR_BOUND);
+    // Position
+    Test_Pos(pos_pow, pos_pow_exp);
+
+    // Check rotation matrix
+    Test_Rot(rot_pow, rot_pow_exp);
+}
 
 
+TEST_F(DualNumberToolsTest, QuaternionPower_RotyPosx)
+{
+    Eigen::Vector3d pos(2, 0, 0);
+    DualQuaternion q(R_y * R_y, pos);
 
-    for (int row = 0; row < 3; row++)
-    {
-        for (int col = 0; col < 3; col++)
-        {
-            ASSERT_NEAR(rot_pow(row, col), rot_pow_exp(row, col), ERROR_BOUND);
-        }
-    }
+    // Calculations
+    DualQuaternion q_pow = q.pow(2);
+    Eigen::Vector3d pos_pow = q_pow.PositionVector();
+    Eigen::Matrix3d rot_pow = q_pow.RotationMatrix();
+
+    std::cout << "position pow: \n" << pos_pow << "\n\n";
+    std::cout << "ROT pow: \n" << rot_pow << "\n\n";
+
+    // Expectations
+    Eigen::Vector3d pos_pow_exp(2, 0, -2);
+    Eigen::Matrix3d rot_pow_exp = R_y * R_y * R_y * R_y;
+
+    // Position
+    Test_Pos(pos_pow, pos_pow_exp);
+
+    // Check rotation matrix
+    Test_Rot(rot_pow, rot_pow_exp);
 }
