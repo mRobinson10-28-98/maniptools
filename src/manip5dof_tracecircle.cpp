@@ -70,11 +70,12 @@ int main()
     std::cout << "Starting position offset: \n" << p_diff << "\n\n";
     std::cout << "Starting position offset mag: \n" << delta_p_mag << "\n\n";
 
+    std::cout << "Press enter to move to circle start:";
+    std::cin.get();
 
     // Initialize manipulator loop
     while(delta_p_mag >= 0.001)
     {
-        manip.CommandJointConfigScLERP(g_circle_start, slerp_t);
         manip.StepModel();
 
             // Current pose
@@ -89,9 +90,33 @@ int main()
         p_diff = g_diff_quat.PositionVector();
         delta_p_mag = p_diff.norm();
 
+        manip.CommandJointConfigScLERP(g_circle_start, slerp_t);
+
         if( (int(sim_clock.GetSimTime() * 1000)) % 1000 == 0)
         {
-            std::cout << "Pose Diff: \n" << g_diff << "\n\n";
+            std::cout << "Pose: \n" << g_t << "\n\n";
+            std::cout << "Pose circle: \n" << g_circle_start << "\n\n";
+            // std::cout << "Pose Diff: \n" << g_diff << "\n\n";
         }
     }
+
+    std::cout << "Press enter to trace circle:";
+    std::cin.get();
+
+    // Trace circle poorly
+    while()
+    {
+        manip.StepModel();
+
+            // Current pose
+        g_t = manip.GetPose();
+        g_t_quat = DualQuaternion(g_t);
+        R_t = g_t_quat.RotationMatrix();
+        p_t = g_t_quat.PositionVector();
+
+        TwistType twist_vel = CircleTrajectory(sim_clock.GetSimTime());
+        Eigen::VectorXd theta_dot = manip.GetSAJacobian() * twist_vel;
+        manip.CommandJointVel(theta_dot);
+    }
+
 }

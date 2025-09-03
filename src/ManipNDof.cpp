@@ -161,7 +161,8 @@ void ManipNDof::CommandJointConfigScLERP(Eigen::Matrix4d poseFinal, double inter
 
     // Calculate next joint config
     Eigen::VectorXd theta_dot = B * (pose_vector_i - pose_vector_t);
-    Eigen::VectorXd theta_i = mTheta + (0.5 * theta_dot) / mClock.GetSimFreq();
+    // Eigen::VectorXd theta_i = mTheta + (0.5 * theta_dot) / mClock.GetSimFreq();
+    Eigen::VectorXd theta_i = mTheta + (0.5 * theta_dot);
     CommandJointConfig(theta_i);
 }
 
