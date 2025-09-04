@@ -2,12 +2,7 @@
 #include <iostream>
 #include <Eigen/Dense>
 
-#include "Common.hpp"
-#include "DualNumberTools.hpp"
-#include "TwistJoint.hpp"
-#include "Manip5Dof.hpp"
-#include "JointControllerSnap.hpp"
-#include "SimClock.hpp"
+#include "maniptools_include.hpp"
 
 using namespace DualNumberTools;
 
