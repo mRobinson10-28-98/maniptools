@@ -115,7 +115,7 @@ void ManipNDof::StepModel()
     Dk();
 }
 
-void ManipNDof::CommandJointConfigScLERP(Eigen::Matrix4d poseFinal, double interpParam)
+Eigen::VectorXd ManipNDof::CommandJointConfigScLERP(Eigen::Matrix4d poseFinal, double interpParam)
 {
     // Current and final pose dual-quat
     DualQuaternion q_t(mGt);
@@ -164,6 +164,7 @@ void ManipNDof::CommandJointConfigScLERP(Eigen::Matrix4d poseFinal, double inter
     // Eigen::VectorXd theta_i = mTheta + (0.5 * theta_dot) / mClock.GetSimFreq();
     Eigen::VectorXd theta_i = mTheta + (0.5 * theta_dot);
     CommandJointConfig(theta_i);
+    return theta_i;
 }
 
 void ManipNDof::Fk()
