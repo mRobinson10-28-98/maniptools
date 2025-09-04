@@ -96,7 +96,6 @@ int main()
         {
             std::cout << "Pose: \n" << g_t << "\n\n";
             std::cout << "Pose circle: \n" << g_circle_start << "\n\n";
-            // std::cout << "Pose Diff: \n" << g_diff << "\n\n";
         }
     }
 
@@ -104,7 +103,7 @@ int main()
     std::cin.get();
 
     // Trace circle poorly
-    while()
+    while(true)
     {
         manip.StepModel();
 
@@ -114,9 +113,15 @@ int main()
         R_t = g_t_quat.RotationMatrix();
         p_t = g_t_quat.PositionVector();
 
+
         TwistType twist_vel = CircleTrajectory(sim_clock.GetSimTime());
-        Eigen::VectorXd theta_dot = manip.GetSAJacobian() * twist_vel;
+        Eigen::VectorXd theta_dot = PseudoInverse(manip.GetSAJacobian()) * twist_vel;
         manip.CommandJointVel(theta_dot);
+
+        if( (int(sim_clock.GetSimTime() * 1000)) % 100 == 0)
+        {
+            std::cout << "Position: \n" << p_t << "\n\n";
+        }
     }
 
 }
