@@ -231,24 +231,24 @@ DualQuaternion DualQuaternion::pow(double t) const
         DualVector A_v = u_hat * A_vn;
         DualQuaternion q(A_n, A_v);
 
-        std::cout << "Starting P: \n" << p << "\n\n";
-        std::cout << "theta: \n" << theta << "\n\n";
-        std::cout << "u \n" << u << "\n\n";
-        std::cout << "m \n" << m << "\n\n";
-        std::cout << "d: \n" << d << "\n\n";
-        std::cout << "A_n.real \n" << A_n.real << "\n\n";
-        std::cout << "A_vn.real \n" << A_vn.real << "\n\n";
-        std::cout << "A_vn.dual \n" << A_vn.dual << "\n\n";
-        std::cout << "A_v.real \n" << A_v.real << "\n\n";
-        std::cout << "A_v.dual \n" << A_v.dual << "\n\n";
-        std::cout << "A_v = \n";
-        std::cout << "(" << u(0) << " + " << m(0) << ")" << " * " << "(" << A_vn.real << " + " << A_vn.dual << ")\n";
-        std::cout << "(" << u(1) << " + " << m(1) << ")\n";
-        std::cout << "(" << u(2) << " + " << m(2) << ")\n";
-        std::cout << "q.real \n" << q.real << "\n\n";
-        std::cout << "Rot: \n" << q.RotationMatrix() << "\n\n";
-        std::cout << "q.dual \n" << q.dual << "\n\n";
-        std::cout << "Pos vector: \n" << q.PositionVector() << "\n\n";
+        // std::cout << "Starting P: \n" << p << "\n\n";
+        // std::cout << "theta: \n" << theta << "\n\n";
+        // std::cout << "u \n" << u << "\n\n";
+        // std::cout << "m \n" << m << "\n\n";
+        // std::cout << "d: \n" << d << "\n\n";
+        // std::cout << "A_n.real \n" << A_n.real << "\n\n";
+        // std::cout << "A_vn.real \n" << A_vn.real << "\n\n";
+        // std::cout << "A_vn.dual \n" << A_vn.dual << "\n\n";
+        // std::cout << "A_v.real \n" << A_v.real << "\n\n";
+        // std::cout << "A_v.dual \n" << A_v.dual << "\n\n";
+        // std::cout << "A_v = \n";
+        // std::cout << "(" << u(0) << " + " << m(0) << ")" << " * " << "(" << A_vn.real << " + " << A_vn.dual << ")\n";
+        // std::cout << "(" << u(1) << " + " << m(1) << ")\n";
+        // std::cout << "(" << u(2) << " + " << m(2) << ")\n";
+        // std::cout << "q.real \n" << q.real << "\n\n";
+        // std::cout << "Rot: \n" << q.RotationMatrix() << "\n\n";
+        // std::cout << "q.dual \n" << q.dual << "\n\n";
+        // std::cout << "Pos vector: \n" << q.PositionVector() << "\n\n";
 
         return q;
     }

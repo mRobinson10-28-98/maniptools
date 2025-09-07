@@ -115,7 +115,7 @@ void ManipNDof::StepModel()
     Dk();
 }
 
-Eigen::VectorXd ManipNDof::CommandJointConfigScLERP(Eigen::Matrix4d poseFinal, double interpParam)
+Eigen::VectorXd ManipNDof::CalculateJointConfigScLERP(Eigen::Matrix4d poseFinal, double interpParam)
 {
     // Current and final pose dual-quat
     DualQuaternion q_t(mGt);
@@ -161,9 +161,7 @@ Eigen::VectorXd ManipNDof::CommandJointConfigScLERP(Eigen::Matrix4d poseFinal, d
 
     // Calculate next joint config
     Eigen::VectorXd theta_dot = B * (pose_vector_i - pose_vector_t);
-    // Eigen::VectorXd theta_i = mTheta + (0.5 * theta_dot) / mClock.GetSimFreq();
     Eigen::VectorXd theta_i = mTheta + (0.5 * theta_dot);
-    CommandJointConfig(theta_i);
     return theta_i;
 }
 

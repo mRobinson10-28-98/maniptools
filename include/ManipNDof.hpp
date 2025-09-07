@@ -42,7 +42,7 @@ public:
     // 3. Calculate differential fk
     void StepModel();
 
-    Eigen::VectorXd CommandJointConfigScLERP(Eigen::Matrix4d poseFinal, double interpParam);
+    Eigen::VectorXd CalculateJointConfigScLERP(Eigen::Matrix4d poseFinal, double interpParam);
 
 protected:
     // Calculate Forward Kinematics
